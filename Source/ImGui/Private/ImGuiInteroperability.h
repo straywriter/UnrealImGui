@@ -57,7 +57,7 @@ namespace ImGuiInterops
 	// Set in the target array navigation input corresponding to gamepad key.
 	// @param NavInputs - Target array
 	// @param Key - Gamepad key mapped to navigation input (non-mapped keys will be ignored)
-	// @param bIsDown - True, if key is down 
+	// @param bIsDown - True, if key is down
 	void SetGamepadNavigationKey(ImGuiTypes::FNavInputArray& NavInputs, const FKey& Key, bool bIsDown);
 
 	// Set in the target array navigation input corresponding to gamepad axis.

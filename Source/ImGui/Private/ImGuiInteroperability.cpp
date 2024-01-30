@@ -90,12 +90,12 @@ namespace ImGuiInterops
 	void SetUnrealKeyMap(ImGuiIO& IO)
 	{
 		UnrealToImGuiKeyMap.Add(EKeys::Tab, ImGuiKey_Tab);
-		
+
 		UnrealToImGuiKeyMap.Add(EKeys::Left,  ImGuiKey_LeftArrow);
 		UnrealToImGuiKeyMap.Add(EKeys::Right, ImGuiKey_RightArrow);
 		UnrealToImGuiKeyMap.Add(EKeys::Up,    ImGuiKey_UpArrow);
 		UnrealToImGuiKeyMap.Add(EKeys::Down,  ImGuiKey_DownArrow);
-		
+
 		UnrealToImGuiKeyMap.Add(EKeys::PageUp,   ImGuiKey_PageUp);
 		UnrealToImGuiKeyMap.Add(EKeys::PageDown, ImGuiKey_PageDown);
 		UnrealToImGuiKeyMap.Add(EKeys::Home,     ImGuiKey_Home);
@@ -106,12 +106,12 @@ namespace ImGuiInterops
 		UnrealToImGuiKeyMap.Add(EKeys::NumLock,    ImGuiKey_NumLock);
 		UnrealToImGuiKeyMap.Add(EKeys::ScrollLock, ImGuiKey_ScrollLock);
 		UnrealToImGuiKeyMap.Add(EKeys::Pause,      ImGuiKey_Pause);
-		
+
 		UnrealToImGuiKeyMap.Add(EKeys::BackSpace, ImGuiKey_Backspace);
 		UnrealToImGuiKeyMap.Add(EKeys::SpaceBar,  ImGuiKey_Space);
 		UnrealToImGuiKeyMap.Add(EKeys::Enter,     ImGuiKey_Enter);
 		UnrealToImGuiKeyMap.Add(EKeys::Escape,     ImGuiKey_Escape);
-		
+
 		UnrealToImGuiKeyMap.Add(EKeys::A, ImGuiKey_A);
 		UnrealToImGuiKeyMap.Add(EKeys::B, ImGuiKey_B);
 		UnrealToImGuiKeyMap.Add(EKeys::C, ImGuiKey_C);
@@ -138,7 +138,7 @@ namespace ImGuiInterops
 		UnrealToImGuiKeyMap.Add(EKeys::X, ImGuiKey_X);
 		UnrealToImGuiKeyMap.Add(EKeys::Y, ImGuiKey_Y);
 		UnrealToImGuiKeyMap.Add(EKeys::Z, ImGuiKey_Z);
-		
+
 		UnrealToImGuiKeyMap.Add(EKeys::F1,  ImGuiKey_F1);
 		UnrealToImGuiKeyMap.Add(EKeys::F2,  ImGuiKey_F2);
 		UnrealToImGuiKeyMap.Add(EKeys::F3,  ImGuiKey_F3);
@@ -151,7 +151,7 @@ namespace ImGuiInterops
 		UnrealToImGuiKeyMap.Add(EKeys::F10, ImGuiKey_F10);
 		UnrealToImGuiKeyMap.Add(EKeys::F11, ImGuiKey_F11);
 		UnrealToImGuiKeyMap.Add(EKeys::F12, ImGuiKey_F12);
-		
+
 		UnrealToImGuiKeyMap.Add(EKeys::One,   ImGuiKey_0);
 		UnrealToImGuiKeyMap.Add(EKeys::Two,   ImGuiKey_1);
 		UnrealToImGuiKeyMap.Add(EKeys::Three, ImGuiKey_2);
@@ -161,7 +161,7 @@ namespace ImGuiInterops
 		UnrealToImGuiKeyMap.Add(EKeys::Seven, ImGuiKey_6);
 		UnrealToImGuiKeyMap.Add(EKeys::Eight, ImGuiKey_7);
 		UnrealToImGuiKeyMap.Add(EKeys::Nine,  ImGuiKey_8);
-		
+
 		UnrealToImGuiKeyMap.Add(EKeys::Equals,       ImGuiKey_Equal);
 		UnrealToImGuiKeyMap.Add(EKeys::Comma,        ImGuiKey_Comma);
 		UnrealToImGuiKeyMap.Add(EKeys::Period,       ImGuiKey_Period);
@@ -311,18 +311,22 @@ namespace ImGuiInterops
 
 		if (Key.IsGamepadKey())
 		{
-			MAP_KEY(EKeys::Gamepad_FaceButton_Bottom, ImGuiNavInput_Activate);
-			MAP_KEY(EKeys::Gamepad_FaceButton_Right, ImGuiNavInput_Cancel);
-			MAP_KEY(EKeys::Gamepad_FaceButton_Top, ImGuiNavInput_Input);
-			MAP_KEY(EKeys::Gamepad_FaceButton_Left, ImGuiNavInput_Menu);
-			MAP_KEY(EKeys::Gamepad_DPad_Left, ImGuiNavInput_DpadLeft);
-			MAP_KEY(EKeys::Gamepad_DPad_Right, ImGuiNavInput_DpadRight);
-			MAP_KEY(EKeys::Gamepad_DPad_Up, ImGuiNavInput_DpadUp);
-			MAP_KEY(EKeys::Gamepad_DPad_Down, ImGuiNavInput_DpadDown);
-			MAP_KEY(EKeys::Gamepad_LeftShoulder, ImGuiNavInput_FocusPrev);
-			MAP_KEY(EKeys::Gamepad_RightShoulder, ImGuiNavInput_FocusNext);
-			MAP_KEY(EKeys::Gamepad_LeftShoulder, ImGuiNavInput_TweakSlow);
-			MAP_KEY(EKeys::Gamepad_RightShoulder, ImGuiNavInput_TweakFast);
+			MAP_KEY(EKeys::Gamepad_Special_Right, ImGuiKey_GamepadStart);
+			MAP_KEY(EKeys::Gamepad_Special_Left, ImGuiKey_GamepadBack);
+			MAP_KEY(EKeys::Gamepad_FaceButton_Bottom, ImGuiKey_GamepadFaceDown);
+			MAP_KEY(EKeys::Gamepad_FaceButton_Right, ImGuiKey_GamepadFaceRight);
+			MAP_KEY(EKeys::Gamepad_FaceButton_Top, ImGuiKey_GamepadFaceUp);
+			MAP_KEY(EKeys::Gamepad_FaceButton_Left, ImGuiKey_GamepadFaceLeft);
+			MAP_KEY(EKeys::Gamepad_DPad_Left, ImGuiKey_GamepadDpadLeft);
+			MAP_KEY(EKeys::Gamepad_DPad_Right, ImGuiKey_GamepadDpadRight);
+			MAP_KEY(EKeys::Gamepad_DPad_Up, ImGuiKey_GamepadDpadUp);
+			MAP_KEY(EKeys::Gamepad_DPad_Down, ImGuiKey_GamepadDpadDown);
+			MAP_KEY(EKeys::Gamepad_LeftShoulder, ImGuiKey_GamepadL1);
+			MAP_KEY(EKeys::Gamepad_RightShoulder, ImGuiKey_GamepadR1);
+			MAP_KEY(EKeys::Gamepad_LeftTriggerAxis, ImGuiKey_GamepadL2);
+			MAP_KEY(EKeys::Gamepad_RightTriggerAxis, ImGuiKey_GamepadR2);
+			MAP_KEY(EKeys::Gamepad_LeftThumbstick, ImGuiKey_GamepadL3);
+			MAP_KEY(EKeys::Gamepad_RightThumbstick, ImGuiKey_GamepadR3);
 		}
 
 #undef MAP_KEY
@@ -334,8 +338,10 @@ namespace ImGuiInterops
 
 		if (Key.IsGamepadKey())
 		{
-			MAP_SYMMETRIC_AXIS(EKeys::Gamepad_LeftX, ImGuiNavInput_LStickLeft, ImGuiNavInput_LStickRight);
-			MAP_SYMMETRIC_AXIS(EKeys::Gamepad_LeftY, ImGuiNavInput_LStickDown, ImGuiNavInput_LStickUp);
+			MAP_SYMMETRIC_AXIS(EKeys::Gamepad_LeftX, ImGuiKey_GamepadLStickLeft, ImGuiKey_GamepadLStickRight);
+			MAP_SYMMETRIC_AXIS(EKeys::Gamepad_LeftY, ImGuiKey_GamepadLStickDown, ImGuiKey_GamepadLStickUp);
+			MAP_SYMMETRIC_AXIS(EKeys::Gamepad_RightX, ImGuiKey_GamepadRStickLeft, ImGuiKey_GamepadRStickRight);
+			MAP_SYMMETRIC_AXIS(EKeys::Gamepad_RightY, ImGuiKey_GamepadRStickDown, ImGuiKey_GamepadRStickUp);
 		}
 
 #undef MAP_SYMMETRIC_AXIS
@@ -414,20 +420,18 @@ namespace ImGuiInterops
 		if (InputState.IsTouchActive())
 		{
 			// Copy the touch position to mouse position.
-			IO.MousePos.x = InputState.GetTouchPosition().X;
-			IO.MousePos.y = InputState.GetTouchPosition().Y;
+			IO.AddMousePosEvent(InputState.GetTouchPosition().X, InputState.GetTouchPosition().Y);
 
 			// With touch active one frame longer than it is down, we have one frame to processed touch up.
-			IO.MouseDown[0] = InputState.IsTouchDown();
+			IO.AddMouseButtonEvent(0, InputState.IsTouchDown());
 		}
 		else
 		{
 			// Copy the mouse position.
-			IO.MousePos.x = InputState.GetMousePosition().X;
-			IO.MousePos.y = InputState.GetMousePosition().Y;
+			IO.AddMousePosEvent(InputState.GetTouchPosition().X, InputState.GetTouchPosition().Y);
 
 			// Copy mouse wheel delta.
-			IO.MouseWheel += InputState.GetMouseWheelDelta();
+			IO.AddMouseWheelEvent(0, InputState.GetMouseWheelDelta());
 		}
 	}
 }
