@@ -361,8 +361,8 @@ namespace ImGuiInterops
 		static const uint32 RightAlt = GetKeyIndex(EKeys::RightAlt);
 
 		// Update modifier key events
-		IO.AddKeyEvent(ImGuiKey_ModShift, InputState.IsShiftDown());
 		IO.AddKeyEvent(ImGuiKey_ModCtrl, InputState.IsControlDown());
+		IO.AddKeyEvent(ImGuiKey_ModShift, InputState.IsShiftDown());
 		IO.AddKeyEvent(ImGuiKey_ModAlt, InputState.IsAltDown());
 		IO.AddKeyEvent(ImGuiKey_ModSuper, false);
 
