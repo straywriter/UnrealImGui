@@ -86,12 +86,12 @@ namespace DebugExecBindings
 		const FKeyBind KeyBind = CreateKeyBind(KeyInfo, Command);
 
 		// Update all possible default player inputs, so changes will be visible in all PIE sessions created after this point.
-		for (TObjectIterator<UClass> It; It; ++It)
+		TArray<UClass*> InputClasses;
+		GetDerivedClasses(UPlayerInput::StaticClass(), InputClasses, true);
+		InputClasses.Add(UPlayerInput::StaticClass());
+		for (const UClass* InputClass : InputClasses)
 		{
-			if (It->IsChildOf(UPlayerInput::StaticClass()))
-			{
-				UpdatePlayerInput(Cast<UPlayerInput>(It->GetDefaultObject()), KeyBind);
-			}
+			UpdatePlayerInput(Cast<UPlayerInput>(InputClass->GetDefaultObject()), KeyBind);
 		}
 
 		// Update all existing player inputs to see changes in running PIE session.
