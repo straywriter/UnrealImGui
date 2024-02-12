@@ -5,8 +5,7 @@
 #include "ImGuiModuleCommands.h"
 #include "ImGuiModuleProperties.h"
 
-#include <Engine/Engine.h>
-#include <GameFramework/GameUserSettings.h>
+#include <Framework/Application/SlateApplication.h>
 #include <Misc/ConfigCacheIni.h>
 
 
@@ -31,11 +30,20 @@ FImGuiDPIScaleInfo::FImGuiDPIScaleInfo()
 float FImGuiDPIScaleInfo::CalculateResolutionBasedScale() const
 {
 	float ResolutionBasedScale = 1.f;
-	if (bScaleWithCurve && GEngine && GEngine->GameUserSettings)
+	if (bScaleWithCurve)
 	{
 		if (const FRichCurve* Curve = DPICurve.GetRichCurveConst())
 		{
-			ResolutionBasedScale *= Curve->Eval((float)GEngine->GameUserSettings->GetDesktopResolution().Y, 1.f);
+			FDisplayMetrics DisplayMetrics;
+			DisplayMetrics.PrimaryDisplayWidth = 0;
+			DisplayMetrics.PrimaryDisplayHeight = 0;
+
+			if (FSlateApplication::IsInitialized())
+			{
+				FSlateApplication::Get().GetInitialDisplayMetrics(DisplayMetrics);
+			}
+
+			ResolutionBasedScale *= Curve->Eval((float)DisplayMetrics.PrimaryDisplayHeight, 1.f);
 		}
 	}
 	return ResolutionBasedScale;

@@ -151,16 +151,17 @@ namespace ImGuiInterops
 		UnrealToImGuiKeyMap.Add(EKeys::F10, ImGuiKey_F10);
 		UnrealToImGuiKeyMap.Add(EKeys::F11, ImGuiKey_F11);
 		UnrealToImGuiKeyMap.Add(EKeys::F12, ImGuiKey_F12);
-		
-		UnrealToImGuiKeyMap.Add(EKeys::One,   ImGuiKey_0);
-		UnrealToImGuiKeyMap.Add(EKeys::Two,   ImGuiKey_1);
-		UnrealToImGuiKeyMap.Add(EKeys::Three, ImGuiKey_2);
-		UnrealToImGuiKeyMap.Add(EKeys::Four,  ImGuiKey_3);
-		UnrealToImGuiKeyMap.Add(EKeys::Five,  ImGuiKey_4);
-		UnrealToImGuiKeyMap.Add(EKeys::Six,   ImGuiKey_5);
-		UnrealToImGuiKeyMap.Add(EKeys::Seven, ImGuiKey_6);
-		UnrealToImGuiKeyMap.Add(EKeys::Eight, ImGuiKey_7);
-		UnrealToImGuiKeyMap.Add(EKeys::Nine,  ImGuiKey_8);
+
+		UnrealToImGuiKeyMap.Add(EKeys::Zero,  ImGuiKey_0);
+		UnrealToImGuiKeyMap.Add(EKeys::One,   ImGuiKey_1);
+		UnrealToImGuiKeyMap.Add(EKeys::Two,   ImGuiKey_2);
+		UnrealToImGuiKeyMap.Add(EKeys::Three, ImGuiKey_3);
+		UnrealToImGuiKeyMap.Add(EKeys::Four,  ImGuiKey_4);
+		UnrealToImGuiKeyMap.Add(EKeys::Five,  ImGuiKey_5);
+		UnrealToImGuiKeyMap.Add(EKeys::Six,   ImGuiKey_6);
+		UnrealToImGuiKeyMap.Add(EKeys::Seven, ImGuiKey_7);
+		UnrealToImGuiKeyMap.Add(EKeys::Eight, ImGuiKey_8);
+		UnrealToImGuiKeyMap.Add(EKeys::Nine,  ImGuiKey_9);
 		
 		UnrealToImGuiKeyMap.Add(EKeys::Equals,       ImGuiKey_Equal);
 		UnrealToImGuiKeyMap.Add(EKeys::Comma,        ImGuiKey_Comma);
@@ -360,11 +361,11 @@ namespace ImGuiInterops
 		static const uint32 LeftAlt = GetKeyIndex(EKeys::LeftAlt);
 		static const uint32 RightAlt = GetKeyIndex(EKeys::RightAlt);
 
-		// Copy key modifiers.
-		IO.KeyCtrl = InputState.IsControlDown();
-		IO.KeyShift = InputState.IsShiftDown();
-		IO.KeyAlt = InputState.IsAltDown();
-		IO.KeySuper = false;
+		// Update modifier key events
+		IO.AddKeyEvent(ImGuiKey_ModCtrl, InputState.IsControlDown());
+		IO.AddKeyEvent(ImGuiKey_ModShift, InputState.IsShiftDown());
+		IO.AddKeyEvent(ImGuiKey_ModAlt, InputState.IsAltDown());
+		IO.AddKeyEvent(ImGuiKey_ModSuper, false);
 
 		// Copy buffers.
 		if (!InputState.GetKeysUpdateRange().IsEmpty())
