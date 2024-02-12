@@ -13,7 +13,7 @@ Status
 
 Supported Unreal Engine version: `4.26`, `4.27`, `5.0`, `5.1`, `5.2`, `5.3`
 
-Docking branch of Dear ImGui is correspondigly available on `docking` branch kept in sync with `master` as much as possible.
+Docking branch of Dear ImGui is correspondigly available on [`docking`](https://github.com/IDI-Systems/UnrealImGui/tree/docking) branch kept in sync with `master` as much as possible.
 
 _Note: Plugin has been tested and if necessary updated to compile and work with these engine versions. As long as possible we will try to maintain backward compatibility of existing features and possibly but not necessarily when adding new features. When it comes to bare-bone ImGui version it should be at least backward compatible with the engine version 4.15. For NetImgui it needs to be determined._
 
