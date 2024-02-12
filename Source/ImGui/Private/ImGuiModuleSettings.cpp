@@ -88,9 +88,13 @@ FImGuiModuleSettings::FImGuiModuleSettings(FImGuiModuleProperties& InProperties,
 {
 #if WITH_EDITOR
 	FCoreUObjectDelegates::OnObjectPropertyChanged.AddRaw(this, &FImGuiModuleSettings::OnPropertyChanged);
+
 	// Force key bindings to be registered again once the editor initialization is completed
 	// So that if there were any input types missed due to loading order, we can inject settings into them as well
-	EditorInitDelegateHandle = FEditorDelegates::OnEditorInitialized.AddLambda([this](double Duration){ Commands.SetKeyBinding(FImGuiModuleCommands::ToggleInput, ToggleInputKey); });
+	EditorInitDelegateHandle = FEditorDelegates::OnEditorInitialized.AddLambda([this](double Duration)
+	{
+		Commands.SetKeyBinding(FImGuiModuleCommands::ToggleInput, ToggleInputKey);
+	});
 #endif
 
 	// Delegate initializer to support settings loaded after this object creation (in stand-alone builds) and potential
