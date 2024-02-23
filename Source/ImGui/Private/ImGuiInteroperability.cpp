@@ -360,6 +360,7 @@ namespace ImGuiInterops
 
 	void CopyInput(ImGuiIO& IO, const FImGuiInputState& InputState)
 	{
+		// TODO: Remove unused?
 		static const uint32 LeftControl = GetKeyIndex(EKeys::LeftControl);
 		static const uint32 RightControl = GetKeyIndex(EKeys::RightControl);
 		static const uint32 LeftShift = GetKeyIndex(EKeys::LeftShift);
@@ -368,10 +369,10 @@ namespace ImGuiInterops
 		static const uint32 RightAlt = GetKeyIndex(EKeys::RightAlt);
 
 		// Update modifier key events
-		IO.AddKeyEvent(ImGuiKey_ModCtrl, InputState.IsControlDown());
-		IO.AddKeyEvent(ImGuiKey_ModShift, InputState.IsShiftDown());
-		IO.AddKeyEvent(ImGuiKey_ModAlt, InputState.IsAltDown());
-		IO.AddKeyEvent(ImGuiKey_ModSuper, false);
+		IO.AddKeyEvent(ImGuiMod_Ctrl, InputState.IsControlDown());
+		IO.AddKeyEvent(ImGuiMod_Shift, InputState.IsShiftDown());
+		IO.AddKeyEvent(ImGuiMod_Alt, InputState.IsAltDown());
+		IO.AddKeyEvent(ImGuiMod_Super, InputState.IsCommandDown());
 
 		// Copy buffers.
 		if (!InputState.GetKeysUpdateRange().IsEmpty())

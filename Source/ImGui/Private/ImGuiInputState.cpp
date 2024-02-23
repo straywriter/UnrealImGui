@@ -90,6 +90,7 @@ void FImGuiInputState::ClearModifierKeys()
 	bIsControlDown = false;
 	bIsShiftDown = false;
 	bIsAltDown = false;
+	bIsCommandDown = false;
 }
 
 void FImGuiInputState::ClearNavigationInputs()

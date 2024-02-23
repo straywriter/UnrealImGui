@@ -252,6 +252,7 @@ void UImGuiInputHandler::CopyModifierKeys(const FInputEvent& InputEvent)
 	InputState->SetControlDown(InputEvent.IsControlDown());
 	InputState->SetShiftDown(InputEvent.IsShiftDown());
 	InputState->SetAltDown(InputEvent.IsAltDown());
+	InputState->SetCommandDown(InputEvent.IsCommandDown());
 }
 
 bool UImGuiInputHandler::IsConsoleEvent(const FKeyEvent& KeyEvent) const
