@@ -92,6 +92,7 @@ FImGuiContextProxy::FImGuiContextProxy(const FString& InName, int32 InContextInd
 
 	// Start initialization.
 	ImGuiIO& IO = ImGui::GetIO();
+	InputState.IO = IO;
 
 	// Set session data storage.
 	IO.IniFilename = IniFilename.c_str();
@@ -104,7 +105,7 @@ FImGuiContextProxy::FImGuiContextProxy(const FString& InName, int32 InContextInd
 	SetDPIScale(InDPIScale);
 
 	// Initialize key mapping, so context can correctly interpret input state.
-	ImGuiInterops::SetUnrealKeyMap(IO);
+	ImGuiInterops::SetUnrealKeyMap();
 
 	// Begin frame to complete context initialization (this is to avoid problems with other systems calling to ImGui
 	// during startup).
@@ -217,7 +218,6 @@ void FImGuiContextProxy::BeginFrame(float DeltaTime)
 		ImGuiIO& IO = ImGui::GetIO();
 		IO.DeltaTime = DeltaTime;
 
-		ImGuiInterops::CopyInput(IO, InputState);
 		InputState.ClearUpdateState();
 
 		IO.DisplaySize = { (float)DisplaySize.X, (float)DisplaySize.Y };
