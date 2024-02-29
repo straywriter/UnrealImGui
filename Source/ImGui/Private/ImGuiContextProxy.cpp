@@ -208,6 +208,12 @@ void FImGuiContextProxy::Tick(float DeltaSeconds)
 
 		// Update remaining context information.
 		bWantsMouseCapture = ImGui::GetIO().WantCaptureMouse;
+
+		GEngine->AddOnScreenDebugMessage(1111, .25f, FColor::Purple, FString::Printf(TEXT("[GUI Context] HasActive Item: %s"),
+			bHasActiveItem ? TEXT("True") : TEXT("False")));
+
+		GEngine->AddOnScreenDebugMessage(1112, .25f, FColor::Purple, FString::Printf(TEXT("[GUI Context] WantsMouseCapture: %s"),
+			bWantsMouseCapture ? TEXT("True") : TEXT("False")));
 	}
 }
 
