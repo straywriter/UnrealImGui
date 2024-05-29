@@ -78,6 +78,9 @@ FImGuiContextManager::FImGuiContextManager(FImGuiModuleSettings& InSettings)
 
 FImGuiContextManager::~FImGuiContextManager()
 {
+	// Early dealloc of contexts for clean shutdown order
+	Contexts.Reset();
+
 	Settings.OnDPIScaleChangedDelegate.RemoveAll(this);
 
 	// Order matters because contexts can be created during World Tick Start events.

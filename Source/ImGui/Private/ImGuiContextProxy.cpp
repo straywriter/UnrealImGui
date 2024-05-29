@@ -119,6 +119,9 @@ FImGuiContextProxy::~FImGuiContextProxy()
 		// version), even though we can pass it to the destroy function.
 		SetAsCurrent();
 
+		// Ensure frame has ended
+		EndFrame();
+
 		// Save context data and destroy.
 		ImGui::DestroyContext(Context);
 
