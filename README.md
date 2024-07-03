@@ -11,11 +11,11 @@ Status
 - [ImGui `v1.90.9`](https://github.com/ocornut/imgui/releases/tag/v1.90.9)
 - [ImPlot `v0.17+f156599f`](https://github.com/epezent/implot/tree/f156599faefe316f7dd20fe6c783bf87c8bb6fd9)
 
-Supported Unreal Engine version: `4.26`, `4.27`, `5.0`, `5.1`, `5.2`, `5.3`, `5.4`
+Supported Unreal Engine version: `4.27`, `5.0`, `5.1`, `5.2`, `5.3`, `5.4`
 
 Docking branch of Dear ImGui is correspondigly available on [`docking`](https://github.com/IDI-Systems/UnrealImGui/tree/docking) branch kept in sync with `master` as much as possible.
 
-_Note: Plugin has been tested and if necessary updated to compile and work with these engine versions. As long as possible we will try to maintain backward compatibility of existing features and possibly but not necessarily when adding new features. When it comes to bare-bone ImGui version it should be at least backward compatible with the engine version 4.15. For NetImgui it needs to be determined._
+_Note: Plugin has been tested and if necessary updated to compile and work with these engine versions. As long as possible we will try to maintain backward compatibility of existing features and possibly but not necessarily when adding new features. When it comes to bare-bone ImGui version it should be at least backward compatible with the engine version 4.15. Tags are available for older UnrealImGui versions supporting specific engine versions. For NetImgui it needs to be determined._
 
 Fork Information
 ----------------
