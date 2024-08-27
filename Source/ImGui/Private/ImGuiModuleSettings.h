@@ -296,8 +296,6 @@ private:
 
 #if WITH_EDITOR
 	void OnPropertyChanged(class UObject* ObjectBeingModified, struct FPropertyChangedEvent& PropertyChangedEvent);
-
-	FDelegateHandle EditorInitDelegateHandle;
 #endif // WITH_EDITOR
 
 	FImGuiModuleProperties& Properties;
