@@ -160,16 +160,24 @@ FReply SImGuiWidget::OnKeyChar(const FGeometry& MyGeometry, const FCharacterEven
 	return InputHandler->OnKeyChar(CharacterEvent);
 }
 
-FReply SImGuiWidget::OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& KeyEvent)
+FReply SImGuiWidget::OnKeyDown_Indirect(const FKeyEvent& KeyEvent)
 {
-	UpdateCanvasControlMode(KeyEvent);
-	return InputHandler->OnKeyDown(KeyEvent);
+	if (HasKeyboardFocus())
+	{
+		UpdateCanvasControlMode(KeyEvent);
+		return InputHandler->OnKeyDown(KeyEvent);
+	}
+	return FReply::Unhandled();
 }
 
-FReply SImGuiWidget::OnKeyUp(const FGeometry& MyGeometry, const FKeyEvent& KeyEvent)
+FReply SImGuiWidget::OnKeyUp_Indirect(const FKeyEvent& KeyEvent)
 {
-	UpdateCanvasControlMode(KeyEvent);
-	return InputHandler->OnKeyUp(KeyEvent);
+	if (HasKeyboardFocus())
+	{
+		UpdateCanvasControlMode(KeyEvent);
+		return InputHandler->OnKeyUp(KeyEvent);
+	}
+	return FReply::Unhandled();
 }
 
 FReply SImGuiWidget::OnAnalogValueChanged(const FGeometry& MyGeometry, const FAnalogInputEvent& AnalogInputEvent)
@@ -284,7 +292,7 @@ void SImGuiWidget::CreateInputHandler(const FSoftClassPath& HandlerClassReferenc
 
 	if (!InputHandler.IsValid())
 	{
-		InputHandler = FImGuiInputHandlerFactory::NewHandler(HandlerClassReference, ModuleManager, GameViewport.Get(), ContextIndex);
+		InputHandler = FImGuiInputHandlerFactory::NewHandler(HandlerClassReference, ModuleManager, GameViewport.Get(), ContextIndex, SharedThis(this));
 	}
 }
 

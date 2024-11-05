@@ -123,6 +123,7 @@ void FImGuiModuleSettings::UpdateSettings()
 		SetShareGamepadInput(SettingsObject->bShareGamepadInput);
 		SetShareMouseInput(SettingsObject->bShareMouseInput);
 		SetUseSoftwareCursor(SettingsObject->bUseSoftwareCursor);
+		SetInputProcessorPriority(SettingsObject->InputProcessorPriority);
 		SetToggleInputKey(SettingsObject->ToggleInput);
 		SetCanvasSizeInfo(SettingsObject->CanvasSize);
 	}
@@ -179,6 +180,11 @@ void FImGuiModuleSettings::SetUseSoftwareCursor(bool bUse)
 		bUseSoftwareCursor = bUse;
 		OnUseSoftwareCursorChanged.Broadcast(bUse);
 	}
+}
+
+void FImGuiModuleSettings::SetInputProcessorPriority(int32 Priority)
+{
+	InputProcessorPriority = Priority;
 }
 
 void FImGuiModuleSettings::SetToggleInputKey(const FImGuiKeyInfo& KeyInfo)

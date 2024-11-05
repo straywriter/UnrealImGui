@@ -3,6 +3,7 @@
 #pragma once
 
 #include <CoreMinimal.h>
+#include <Framework/Application/IInputProcessor.h>
 #include <Input/Reply.h>
 #include <UObject/Object.h>
 #include <UObject/WeakObjectPtr.h>
@@ -174,9 +175,9 @@ private:
 
 	void OnPostImGuiUpdate();
 
-	void Initialize(FImGuiModuleManager* InModuleManager, UGameViewportClient* InGameViewport, int32 InContextIndex);
+	void Initialize(FImGuiModuleManager* InModuleManager, UGameViewportClient* InGameViewport, int32 InContextIndex, TSharedRef<class SImGuiWidget> Widget);
 
-	virtual void BeginDestroy() override;
+	void Deinitialize();
 
 	class FImGuiInputState* InputState = nullptr;
 
@@ -188,6 +189,8 @@ private:
 
 	TWeakObjectPtr<UGameViewportClient> GameViewport;
 
+	TSharedPtr<class FImGuiInputProcessor> InputProcessor;
+
 	int32 ContextIndex = -1;
 
 #if WITH_EDITOR
@@ -196,3 +199,16 @@ private:
 
 	friend class FImGuiInputHandlerFactory;
 };
+
+class FImGuiInputProcessor : public IInputProcessor
+{
+public:
+	FImGuiInputProcessor(TSharedRef<class SImGuiWidget> InOwnerWidget);
+	void Tick(const float DeltaTime, FSlateApplication& SlateApp, TSharedRef<ICursor> Cursor) override {};
+	bool HandleKeyDownEvent(FSlateApplication& SlateApp, const FKeyEvent& InKeyEvent) override;
+	bool HandleKeyUpEvent(FSlateApplication& SlateApp, const FKeyEvent& InKeyEvent) override;
+
+private:
+	TWeakPtr<class SImGuiWidget> OwnerWidget;
+};
+
