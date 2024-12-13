@@ -8,10 +8,10 @@ Dear ImGui is an immediate-mode graphical user interface library that is very li
 
 Status
 ------
-- [ImGui `v1.91.3`](https://github.com/ocornut/imgui/releases/tag/v1.91.3)
-- [ImPlot `v0.17+f156599f`](https://github.com/epezent/implot/tree/f156599faefe316f7dd20fe6c783bf87c8bb6fd9)
+- [ImGui `v1.91.4`](https://github.com/ocornut/imgui/releases/tag/v1.91.4)
+- [ImPlot `v0.17+419a8a0f`](https://github.com/epezent/implot/tree/419a8a0f5fcb77e1e7c19ab540441686bfe21bca)
 
-Supported Unreal Engine version: `4.27`, `5.0`, `5.1`, `5.2`, `5.3`, `5.4`
+Supported Unreal Engine version: `4.27`, `5.0`, `5.1`, `5.2`, `5.3`, `5.4`, `5.5`
 
 Docking branch of Dear ImGui is correspondigly available on [`docking`](https://github.com/IDI-Systems/UnrealImGui/tree/docking) branch kept in sync with `master` as much as possible.
 
@@ -26,8 +26,8 @@ Large portions of this `README.md` have been removed to keep redundant informati
 Also note that the NetImGui branch is not up to date with any of this fork's changes.
 
 - Updated core source files for **Unreal Engine 5** while maintaining **Unreal Engine 4** compatibility.
-- Updated Dear ImGui to `v1.91.3`.
-- Added ImPlot `v0.17+f156599f`.
+- Updated Dear ImGui to `v1.91.4`.
+- Added ImPlot `v0.17+419a8a0f`.
 - `ImGui::IsKey*` now functional with all known ImGui keys.
 - Updated input handling flow to be [standard compliant](https://github.com/ocornut/imgui/issues/4921) with Dear ImGui 1.87 which makes ImGui react better at low FPS. ~~Will add `IMGUI_DISABLE_OBSOLETE_KEYIO` preprocessor once I've ripped out old style input.~~
 - Allowed `UTexture` for Texture Manager so render targets can also be rendered to quads rather than just being limited to using `UTexture2D` instances.
