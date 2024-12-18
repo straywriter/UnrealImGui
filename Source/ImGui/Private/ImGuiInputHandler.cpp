@@ -8,6 +8,7 @@
 #include "ImGuiModuleManager.h"
 #include "ImGuiModuleSettings.h"
 #include "VersionCompatibility.h"
+#include "Widgets/SImGuiWidget.h"
 
 #include <Engine/Console.h>
 #include <Framework/Application/SlateApplication.h>
@@ -329,7 +330,7 @@ void UImGuiInputHandler::OnPostImGuiUpdate()
 	InputState->SetGamepad(PlatformApplication.IsValid() && PlatformApplication->IsGamepadAttached());
 }
 
-void UImGuiInputHandler::Initialize(FImGuiModuleManager* InModuleManager, UGameViewportClient* InGameViewport, int32 InContextIndex)
+void UImGuiInputHandler::Initialize(FImGuiModuleManager* InModuleManager, UGameViewportClient* InGameViewport, int32 InContextIndex, TSharedRef<SImGuiWidget> Widget)
 {
 	ModuleManager = InModuleManager;
 	GameViewport = InGameViewport;
@@ -356,11 +357,14 @@ void UImGuiInputHandler::Initialize(FImGuiModuleManager* InModuleManager, UGameV
 			TEXT("PIE feature allowing execution of stop command in ImGui input mode will be disabled."));
 	}
 #endif // WITH_EDITOR
+
+	InputProcessor = MakeShared<FImGuiInputProcessor>(Widget);
+	FSlateApplication::Get().RegisterInputPreProcessor(InputProcessor, ModuleManager->GetSettings().GetInputProcessorPriority());
 }
 
-void UImGuiInputHandler::BeginDestroy()
+void UImGuiInputHandler::Deinitialize()
 {
-	Super::BeginDestroy();
+	FSlateApplication::Get().UnregisterInputPreProcessor(InputProcessor);
 
 	// To catch leftovers from modules shutdown during PIE session.
 	extern FImGuiModuleManager* ImGuiModuleManager;
@@ -370,3 +374,25 @@ void UImGuiInputHandler::BeginDestroy()
 	}
 }
 
+FImGuiInputProcessor::FImGuiInputProcessor(TSharedRef<SImGuiWidget> InOwnerWidget)
+	: OwnerWidget(InOwnerWidget)
+{
+}
+
+bool FImGuiInputProcessor::HandleKeyDownEvent(FSlateApplication& SlateApp, const FKeyEvent& InKeyEvent)
+{
+	if (OwnerWidget.IsValid())
+	{
+		return OwnerWidget.Pin()->OnKeyDown_Indirect(InKeyEvent).IsEventHandled();
+	}
+	return false;
+}
+
+bool FImGuiInputProcessor::HandleKeyUpEvent(FSlateApplication& SlateApp, const FKeyEvent& InKeyEvent)
+{
+	if (OwnerWidget.IsValid())
+	{
+		return OwnerWidget.Pin()->OnKeyUp_Indirect(InKeyEvent).IsEventHandled();
+	}
+	return false;
+}
