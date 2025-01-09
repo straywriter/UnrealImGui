@@ -39,6 +39,12 @@ namespace ImGuiInterops
 	// Convert from ImGuiMouseCursor type to EMouseCursor.
 	EMouseCursor::Type ToSlateMouseCursor(ImGuiMouseCursor MouseCursor);
 
+	// Set in the target array navigation input corresponding to gamepad key.
+	// @param NavInputs - Target array
+	// @param Key - Gamepad key mapped to navigation input (non-mapped keys will be ignored)
+	// @param bIsDown - True, if key is down
+	void SetGamepadNavigationKey(ImGuiTypes::FNavInputArray& NavInputs, const FKey& Key, bool bIsDown);
+
 	// Set in the target array navigation input corresponding to gamepad axis.
 	// @param NavInputs - Target array
 	// @param Key - Gamepad axis key mapped to navigation input (non-axis or non-mapped inputs will be ignored)
@@ -111,12 +117,12 @@ namespace ImGuiInterops
 	// Convert from ImGui Texture Id to Texture Index that we use for texture resources.
 	FORCEINLINE TextureIndex ToTextureIndex(ImTextureID Index)
 	{
-		return static_cast<TextureIndex>(reinterpret_cast<intptr_t>(Index));
+		return static_cast<TextureIndex>(static_cast<intptr_t>(Index));
 	}
 
 	// Convert from Texture Index to ImGui Texture Id that we pass to ImGui.
 	FORCEINLINE ImTextureID ToImTextureID(TextureIndex Index)
 	{
-		return reinterpret_cast<ImTextureID>(static_cast<intptr_t>(Index));
+		return static_cast<ImTextureID>(static_cast<intptr_t>(Index));
 	}
 }
