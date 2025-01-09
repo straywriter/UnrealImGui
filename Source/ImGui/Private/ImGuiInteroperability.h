@@ -25,7 +25,9 @@ namespace ImGuiInterops
 
 	// Map Unreal FKey to ImGuiKey
 	void SetUnrealKeyMap();
+	void SetUnrealModMap();
 	ImGuiKey UnrealToImGuiKey(const FKey& Key);
+	ImGuiKey UnrealToImGuiMod(const FKey& Key);
 
 	// Map mouse FKey to index in mouse buttons buffer.
 	int GetMouseIndex(const FKey& MouseButton);
@@ -38,12 +40,6 @@ namespace ImGuiInterops
 
 	// Convert from ImGuiMouseCursor type to EMouseCursor.
 	EMouseCursor::Type ToSlateMouseCursor(ImGuiMouseCursor MouseCursor);
-
-	// Set in the target array navigation input corresponding to gamepad key.
-	// @param NavInputs - Target array
-	// @param Key - Gamepad key mapped to navigation input (non-mapped keys will be ignored)
-	// @param bIsDown - True, if key is down
-	void SetGamepadNavigationKey(ImGuiTypes::FNavInputArray& NavInputs, const FKey& Key, bool bIsDown);
 
 	// Set in the target array navigation input corresponding to gamepad axis.
 	// @param NavInputs - Target array

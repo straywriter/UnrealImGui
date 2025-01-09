@@ -44,6 +44,12 @@ void FImGuiInputState::SetKeyDown(const FKey& Key, bool bIsDown)
 	{
 		bIsCommandDown = bIsDown;
 	}
+
+	const ImGuiKey& ImMod = ImGuiInterops::UnrealToImGuiMod(Key);
+	if (ImMod != ImGuiKey_None)
+	{
+		IO.AddKeyEvent(ImMod, bIsDown);
+	}
 }
 
 void FImGuiInputState::SetMouseDown(const FPointerEvent& MouseEvent, bool bIsDown)

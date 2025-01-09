@@ -11,6 +11,7 @@ namespace ImGuiInterops
 
 	static TMap<FKey, int> UnrealToImGuiMouseMap;
 	static TMap<FKey, ImGuiKey> UnrealToImGuiKeyMap;
+	static TMap<FKey, ImGuiKey> UnrealToImGuiModMap;
 
 	void SetUnrealKeyMap()
 	{
@@ -153,6 +154,18 @@ namespace ImGuiInterops
 		UnrealToImGuiMouseMap.Add(EKeys::ThumbMouseButton2, 4);
 	}
 
+	void SetUnrealModMap()
+	{
+		UnrealToImGuiModMap.Add(EKeys::LeftControl, ImGuiMod_Ctrl);
+		UnrealToImGuiModMap.Add(EKeys::RightControl, ImGuiMod_Ctrl);
+		UnrealToImGuiModMap.Add(EKeys::LeftShift, ImGuiMod_Shift);
+		UnrealToImGuiModMap.Add(EKeys::RightShift, ImGuiMod_Shift);
+		UnrealToImGuiModMap.Add(EKeys::LeftAlt, ImGuiMod_Alt);
+		UnrealToImGuiModMap.Add(EKeys::RightAlt, ImGuiMod_Alt);
+		UnrealToImGuiModMap.Add(EKeys::LeftCommand, ImGuiMod_Super);
+		UnrealToImGuiModMap.Add(EKeys::RightCommand, ImGuiMod_Super);
+	}
+
 	ImGuiKey UnrealToImGuiKey(const FKey& Key)
 	{
 		if (UnrealToImGuiKeyMap.Contains(Key))
@@ -161,6 +174,15 @@ namespace ImGuiInterops
 		}
 
 		UE_LOG(LogImGuiInput, Warning, TEXT("Key '%s' not supported!"), *Key.ToString());
+		return ImGuiKey_None;
+	}
+
+	ImGuiKey UnrealToImGuiMod(const FKey& Key)
+	{
+		if (UnrealToImGuiModMap.Contains(Key))
+		{
+			return UnrealToImGuiModMap[Key];
+		}
 		return ImGuiKey_None;
 	}
 
