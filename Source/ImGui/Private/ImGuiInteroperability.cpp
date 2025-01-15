@@ -142,8 +142,8 @@ namespace ImGuiInterops
 		UnrealToImGuiKeyMap.Add(EKeys::Gamepad_DPad_Down, ImGuiKey_GamepadDpadDown);
 		UnrealToImGuiKeyMap.Add(EKeys::Gamepad_LeftShoulder, ImGuiKey_GamepadL1);
 		UnrealToImGuiKeyMap.Add(EKeys::Gamepad_RightShoulder, ImGuiKey_GamepadR1);
-		UnrealToImGuiKeyMap.Add(EKeys::Gamepad_LeftTriggerAxis, ImGuiKey_GamepadL2);
-		UnrealToImGuiKeyMap.Add(EKeys::Gamepad_RightTriggerAxis, ImGuiKey_GamepadR2);
+		UnrealToImGuiKeyMap.Add(EKeys::Gamepad_LeftTrigger, ImGuiKey_GamepadL2);
+		UnrealToImGuiKeyMap.Add(EKeys::Gamepad_RightTrigger, ImGuiKey_GamepadR2);
 		UnrealToImGuiKeyMap.Add(EKeys::Gamepad_LeftThumbstick, ImGuiKey_GamepadL3);
 		UnrealToImGuiKeyMap.Add(EKeys::Gamepad_RightThumbstick, ImGuiKey_GamepadR3);
 
@@ -152,10 +152,7 @@ namespace ImGuiInterops
 		UnrealToImGuiMouseMap.Add(EKeys::MiddleMouseButton, 2);
 		UnrealToImGuiMouseMap.Add(EKeys::ThumbMouseButton, 3);
 		UnrealToImGuiMouseMap.Add(EKeys::ThumbMouseButton2, 4);
-	}
 
-	void SetUnrealModMap()
-	{
 		UnrealToImGuiModMap.Add(EKeys::LeftControl, ImGuiMod_Ctrl);
 		UnrealToImGuiModMap.Add(EKeys::RightControl, ImGuiMod_Ctrl);
 		UnrealToImGuiModMap.Add(EKeys::LeftShift, ImGuiMod_Shift);

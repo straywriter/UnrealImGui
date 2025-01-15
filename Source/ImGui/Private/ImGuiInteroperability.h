@@ -25,7 +25,6 @@ namespace ImGuiInterops
 
 	// Map Unreal FKey to ImGuiKey
 	void SetUnrealKeyMap();
-	void SetUnrealModMap();
 	ImGuiKey UnrealToImGuiKey(const FKey& Key);
 	ImGuiKey UnrealToImGuiMod(const FKey& Key);
 

@@ -207,17 +207,18 @@ void FImGuiContextProxy::Tick(float DeltaSeconds)
 		bHasActiveItem = ImGui::IsAnyItemActive();
 		MouseCursor = ImGuiInterops::ToSlateMouseCursor(ImGui::GetMouseCursor());
 
-		// Begin a new frame and set the context back to a state in which it allows to draw controls.
-		BeginFrame(DeltaSeconds);
-
 		// Update remaining context information.
 		bWantsMouseCapture = ImGui::GetIO().WantCaptureMouse;
+		//UE_LOG(LogImGuiInput, Warning, TEXT("IO.WantCaptureKeyboard: %s"), ImGui::GetIO().WantCaptureKeyboard ? TEXT("True") : TEXT("False"));
 
-		GEngine->AddOnScreenDebugMessage(1111, .25f, FColor::Purple, FString::Printf(TEXT("[GUI Context] HasActive Item: %s"),
-			bHasActiveItem ? TEXT("True") : TEXT("False")));
+		//GEngine->AddOnScreenDebugMessage(1111, .25f, FColor::Purple, FString::Printf(TEXT("[GUI Context] HasActive Item: %s"),
+		//	bHasActiveItem ? TEXT("True") : TEXT("False")));
 
-		GEngine->AddOnScreenDebugMessage(1112, .25f, FColor::Purple, FString::Printf(TEXT("[GUI Context] WantsMouseCapture: %s"),
-			bWantsMouseCapture ? TEXT("True") : TEXT("False")));
+		//GEngine->AddOnScreenDebugMessage(1112, .25f, FColor::Purple, FString::Printf(TEXT("[GUI Context] WantsMouseCapture: %s"),
+		//	bWantsMouseCapture ? TEXT("True") : TEXT("False")));
+
+		// Begin a new frame and set the context back to a state in which it allows to draw controls.
+		BeginFrame(DeltaSeconds);
 	}
 }
 
