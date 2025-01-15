@@ -169,8 +169,6 @@ namespace ImGuiInterops
 		{
 			return UnrealToImGuiKeyMap[Key];
 		}
-
-		UE_LOG(LogImGuiInput, Warning, TEXT("Key '%s' not supported!"), *Key.ToString());
 		return ImGuiKey_None;
 	}
 
@@ -189,8 +187,6 @@ namespace ImGuiInterops
 		{
 			return UnrealToImGuiMouseMap[MouseButton];
 		}
-
-		UE_LOG(LogImGuiInput, Warning, TEXT("Mouse button '%s' not supported!"), *MouseButton.ToString());
 		return -1;
 	}
 
@@ -220,36 +216,36 @@ namespace ImGuiInterops
 
 	namespace
 	{
-		inline void UpdateAxisValues(ImGuiIO& IO, ImGuiKey Axis, ImGuiKey Opposite, float Value)
+		inline void UpdateAxisValues(ImGuiIO& IOFunctions, ImGuiKey Axis, ImGuiKey Opposite, float Value)
 		{
 			constexpr float AxisInputThreshold = 0.166f;
 
 			// Filter out small values to avoid false positives (helpful in case of worn controllers).
 			const float AxisValue = FMath::Max(0.f, Value - AxisInputThreshold);
 
-			IO.AddKeyAnalogEvent(Axis, AxisValue > 0.10f, AxisValue);
-			IO.AddKeyAnalogEvent(Opposite, false, 0.f);
+			IOFunctions.AddKeyAnalogEvent(Axis, AxisValue > 0.10f, AxisValue);
+			IOFunctions.AddKeyAnalogEvent(Opposite, false, 0.f);
 		}
 
-		inline void UpdateSymmetricAxis(ImGuiIO& IO, const FKey& Key, const FKey& KeyCondition, ImGuiKey Negative, ImGuiKey Positive, float Value)
+		inline void UpdateSymmetricAxis(ImGuiIO& IOFunctions, const FKey& Key, const FKey& KeyCondition, ImGuiKey Negative, ImGuiKey Positive, float Value)
 		{
 			if (Key == KeyCondition)
 			{
 				if (Value < 0.f)
 				{
-					UpdateAxisValues(IO, Negative, Positive, -Value);
+					UpdateAxisValues(IOFunctions, Negative, Positive, -Value);
 				}
 				else
 				{
-					UpdateAxisValues(IO, Positive, Negative, Value);
+					UpdateAxisValues(IOFunctions, Positive, Negative, Value);
 				}
 			}
 		}
 	}
 
-	void SetGamepadNavigationAxis(ImGuiIO& IO, const FKey& Key, float Value)
+	void SetGamepadNavigationAxis(ImGuiIO& IOFunctions, const FKey& Key, float Value)
 	{
-#define MAP_SYMMETRIC_AXIS(KeyCondition, NegNavIndex, PosNavIndex) UpdateSymmetricAxis(IO, Key, KeyCondition, NegNavIndex, PosNavIndex, Value)
+#define MAP_SYMMETRIC_AXIS(KeyCondition, NegNavIndex, PosNavIndex) UpdateSymmetricAxis(IOFunctions, Key, KeyCondition, NegNavIndex, PosNavIndex, Value)
 
 		if (Key.IsGamepadKey())
 		{

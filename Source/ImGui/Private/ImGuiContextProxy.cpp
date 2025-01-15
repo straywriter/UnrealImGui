@@ -92,7 +92,7 @@ FImGuiContextProxy::FImGuiContextProxy(const FString& InName, int32 InContextInd
 
 	// Start initialization.
 	ImGuiIO& IO = ImGui::GetIO();
-	InputState.IO = IO;
+	InputState.IOFunctions = IO;
 
 	// Set session data storage.
 	IO.IniFilename = IniFilename.c_str();
@@ -106,7 +106,6 @@ FImGuiContextProxy::FImGuiContextProxy(const FString& InName, int32 InContextInd
 
 	// Initialize key mapping, so context can correctly interpret input state.
 	ImGuiInterops::SetUnrealKeyMap();
-	ImGuiInterops::SetUnrealModMap();
 
 	// Begin frame to complete context initialization (this is to avoid problems with other systems calling to ImGui
 	// during startup).
@@ -202,20 +201,20 @@ void FImGuiContextProxy::Tick(float DeltaSeconds)
 			EndFrame();
 		}
 
+		ImGuiIO& IO = ImGui::GetIO();
+
 		// Update context information (some data need to be collected before starting a new frame while some other data
 		// may need to be collected after).
 		bHasActiveItem = ImGui::IsAnyItemActive();
 		MouseCursor = ImGuiInterops::ToSlateMouseCursor(ImGui::GetMouseCursor());
 
 		// Update remaining context information.
-		bWantsMouseCapture = ImGui::GetIO().WantCaptureMouse;
-		//UE_LOG(LogImGuiInput, Warning, TEXT("IO.WantCaptureKeyboard: %s"), ImGui::GetIO().WantCaptureKeyboard ? TEXT("True") : TEXT("False"));
+		bWantsMouseCapture = IO.WantCaptureMouse;
 
-		//GEngine->AddOnScreenDebugMessage(1111, .25f, FColor::Purple, FString::Printf(TEXT("[GUI Context] HasActive Item: %s"),
-		//	bHasActiveItem ? TEXT("True") : TEXT("False")));
-
-		//GEngine->AddOnScreenDebugMessage(1112, .25f, FColor::Purple, FString::Printf(TEXT("[GUI Context] WantsMouseCapture: %s"),
-		//	bWantsMouseCapture ? TEXT("True") : TEXT("False")));
+		// Set Config and Backend flags in this IO context, as InputState IO is only for function use
+		ImGuiInterops::SetFlag(IO.ConfigFlags, ImGuiConfigFlags_NavEnableKeyboard, InputState.IsKeyboardNavigationEnabled());
+		ImGuiInterops::SetFlag(IO.ConfigFlags, ImGuiConfigFlags_NavEnableGamepad, InputState.IsGamepadNavigationEnabled());
+		ImGuiInterops::SetFlag(IO.BackendFlags, ImGuiBackendFlags_HasGamepad, InputState.HasGamepad());
 
 		// Begin a new frame and set the context back to a state in which it allows to draw controls.
 		BeginFrame(DeltaSeconds);

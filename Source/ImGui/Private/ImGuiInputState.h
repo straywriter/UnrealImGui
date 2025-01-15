@@ -141,7 +141,7 @@ public:
 	// and information about dirty parts of keys or mouse buttons arrays.
 	void ClearUpdateState();
 
-	ImGuiIO IO;
+	ImGuiIO IOFunctions; // Only for functional use!
 
 private:
 	void ClearMouseAnalogue();

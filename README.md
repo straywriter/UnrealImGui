@@ -29,7 +29,7 @@ Also note that the NetImGui branch is not up to date with any of this fork's cha
 - Updated Dear ImGui to `v1.91.4`.
 - Added ImPlot `v0.17+419a8a0f`.
 - `ImGui::IsKey*` now functional with all known ImGui keys.
-- Updated input handling flow to be [standard compliant](https://github.com/ocornut/imgui/issues/4921) with Dear ImGui 1.87 which makes ImGui react better at low FPS. ~~Will add `IMGUI_DISABLE_OBSOLETE_KEYIO` preprocessor once I've ripped out old style input.~~
+- Updated input handling flow to be [standard compliant](https://github.com/ocornut/imgui/issues/4921) with Dear ImGui 1.87 which makes ImGui react better at low FPS.
 - Allowed `UTexture` for Texture Manager so render targets can also be rendered to quads rather than just being limited to using `UTexture2D` instances.
 - Added the ability to instruct ImGui context to build custom fonts (like FontAwesome).
 - Changed Module Type to `Runtime`.
