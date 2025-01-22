@@ -92,6 +92,7 @@ FImGuiContextProxy::FImGuiContextProxy(const FString& InName, int32 InContextInd
 
 	// Start initialization.
 	ImGuiIO& IO = ImGui::GetIO();
+	InputState.IOFunctions = IO;
 
 	// Set session data storage.
 	IO.IniFilename = IniFilename.c_str();
@@ -104,7 +105,7 @@ FImGuiContextProxy::FImGuiContextProxy(const FString& InName, int32 InContextInd
 	SetDPIScale(InDPIScale);
 
 	// Initialize key mapping, so context can correctly interpret input state.
-	ImGuiInterops::SetUnrealKeyMap(IO);
+	ImGuiInterops::SetUnrealKeyMap();
 
 	// Begin frame to complete context initialization (this is to avoid problems with other systems calling to ImGui
 	// during startup).
@@ -200,16 +201,23 @@ void FImGuiContextProxy::Tick(float DeltaSeconds)
 			EndFrame();
 		}
 
+		ImGuiIO& IO = ImGui::GetIO();
+
 		// Update context information (some data need to be collected before starting a new frame while some other data
 		// may need to be collected after).
 		bHasActiveItem = ImGui::IsAnyItemActive();
 		MouseCursor = ImGuiInterops::ToSlateMouseCursor(ImGui::GetMouseCursor());
 
+		// Update remaining context information.
+		bWantsMouseCapture = IO.WantCaptureMouse;
+
+		// Set Config and Backend flags in this IO context, as InputState IO is only for function use
+		ImGuiInterops::SetFlag(IO.ConfigFlags, ImGuiConfigFlags_NavEnableKeyboard, InputState.IsKeyboardNavigationEnabled());
+		ImGuiInterops::SetFlag(IO.ConfigFlags, ImGuiConfigFlags_NavEnableGamepad, InputState.IsGamepadNavigationEnabled());
+		ImGuiInterops::SetFlag(IO.BackendFlags, ImGuiBackendFlags_HasGamepad, InputState.HasGamepad());
+
 		// Begin a new frame and set the context back to a state in which it allows to draw controls.
 		BeginFrame(DeltaSeconds);
-
-		// Update remaining context information.
-		bWantsMouseCapture = ImGui::GetIO().WantCaptureMouse;
 	}
 }
 
@@ -220,7 +228,6 @@ void FImGuiContextProxy::BeginFrame(float DeltaTime)
 		ImGuiIO& IO = ImGui::GetIO();
 		IO.DeltaTime = DeltaTime;
 
-		ImGuiInterops::CopyInput(IO, InputState);
 		InputState.ClearUpdateState();
 
 		IO.DisplaySize = { (float)DisplaySize.X, (float)DisplaySize.Y };
