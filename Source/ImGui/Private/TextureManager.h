@@ -149,7 +149,7 @@ private:
 
 		const FName& GetName() const { return Name; }
 		const FSlateResourceHandle& GetResourceHandle() const;
-		UTexture* GetTexture() const { return Cast<UTexture>(Brush.GetResourceObject()); }
+		UTexture* GetTexture() const;
 
 	private:
 
