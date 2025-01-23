@@ -11,6 +11,7 @@
 #include "ImGuiModuleManager.h"
 #include "ImGuiModuleSettings.h"
 #include "TextureManager.h"
+#include "UnrealClient.h"
 #include "Utilities/Arrays.h"
 #include "VersionCompatibility.h"
 
