@@ -6,6 +6,7 @@
 #include <Framework/Application/SlateApplication.h>
 
 #include <algorithm>
+#include "RHITypes.h"
 
 
 void FTextureManager::InitializeErrorTexture(const FColor& Color)
@@ -158,6 +159,11 @@ const FSlateResourceHandle& FTextureManager::FTextureEntry::GetResourceHandle() 
 		CachedResourceHandle = FSlateApplication::Get().GetRenderer()->GetResourceHandle(Brush);
 	}
 	return CachedResourceHandle;
+}
+
+UTexture* FTextureManager::FTextureEntry::GetTexture() const
+{
+	return Cast<UTexture>(Brush.GetResourceObject());
 }
 
 void FTextureManager::FTextureEntry::Reset(bool bReleaseResources)

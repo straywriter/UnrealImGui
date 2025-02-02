@@ -8,6 +8,7 @@
 
 #include <Modules/ModuleManager.h>
 
+class UTexture;
 
 class FImGuiModule : public IModuleInterface
 {
