@@ -259,7 +259,11 @@ void FImGuiContextProxy::UpdateDrawData(ImDrawData* DrawData)
 {
 	if (DrawData && DrawData->CmdListsCount > 0)
 	{
+#if ENGINE_COMPATIBILITY_LEGACY_CONTAINER_SHRINKING
 		DrawLists.SetNum(DrawData->CmdListsCount, false);
+#else
+		DrawLists.SetNum(DrawData->CmdListsCount, EAllowShrinking::No);
+#endif // ENGINE_COMPATIBILITY_LEGACY_CONTAINER_SHRINKING
 
 		for (int Index = 0; Index < DrawData->CmdListsCount; Index++)
 		{
