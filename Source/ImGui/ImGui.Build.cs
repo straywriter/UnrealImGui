@@ -102,5 +102,15 @@ public class ImGui : ModuleRules
 
 		// Force ImPlot to export its methods in this module DLL so we can import them in our main project
 		PrivateDefinitions.Add("IMPLOT_API=DLLEXPORT");
+
+		// Use FreeType
+		AddEngineThirdPartyPrivateStaticDependencies(Target,
+			new string[]
+			{
+				"FreeType2"
+			});
+
+		PrivateDefinitions.Add("IMGUI_ENABLE_FREETYPE");
+		PrivateIncludePaths.Add("ImGui/Public/misc/freetype");
 	}
 }
