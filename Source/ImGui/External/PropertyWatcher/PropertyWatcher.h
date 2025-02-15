@@ -75,37 +75,39 @@
 		See end of file for license information.
 */
 
+#pragma once
+
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wformat"
 #endif
 
-#if !UE_SERVER
-
-#ifndef PROPERTY_WATCHER_H_INCLUDE
-#define PROPERTY_WATCHER_H_INCLUDE
-
 #include "imgui.h"
 
-namespace PropertyWatcher {
-	
-	// FAnsiStringView seems too verbose.
-	// This gets us closer to the size of "FString".
-	typedef FAnsiStringView FAView;
+// FAnsiStringView seems too verbose.
+// This gets us closer to the size of "FString".
+typedef FAnsiStringView FAView;
+
+FORCEINLINE const char* operator*(FAView a) { return a.GetData(); }
+
+
+struct IMGUI_API FPropertyWatcher
+{
 
 	// Writing .GetData() everywhere looks unpleasant.
-	FORCEINLINE const char* operator*(FAView a) { return a.GetData(); }
 
 	// These functions don't exist with a search case parameter for string views.
 	// So we have to add them ourselfs.
 	template <typename CharType>
-	inline int32 StringView_Find(TStringView<CharType>& View, TStringView<CharType> Search, ESearchCase::Type SearchCase = ESearchCase::Type::IgnoreCase, int32 StartPosition = 0) {
+	static inline int32 StringView_Find(TStringView<CharType>& View, TStringView<CharType> Search,
+	                             ESearchCase::Type SearchCase = ESearchCase::Type::IgnoreCase, int32 StartPosition = 0)
+	{
 		int32 Index = UE::String::FindFirst(View.RightChop(StartPosition), Search, SearchCase);
 		return Index == INDEX_NONE ? INDEX_NONE : Index + StartPosition;
 	}
 
 	template <typename CharType>
-	inline bool StringView_Contains(TStringView<CharType>& View, TStringView<CharType> Search, ESearchCase::Type SearchCase = ESearchCase::Type::IgnoreCase) {
+	static inline bool StringView_Contains(TStringView<CharType>& View, TStringView<CharType> Search, ESearchCase::Type SearchCase = ESearchCase::Type::IgnoreCase) {
 		return StringView_Find(View, Search, SearchCase) != INDEX_NONE;
 	}
 
@@ -120,7 +122,8 @@ namespace PropertyWatcher {
 		Function,
 	};
 
-	struct IMGUI_API PropertyItem {
+	struct  PropertyItem
+	{
 		// Maybe in future write list of all possible combinations that are possible and or used in code.
 		// So we don't have to check everything all the time.
 
@@ -149,12 +152,12 @@ namespace PropertyWatcher {
 		int GetMemberCount();
 	};
 
-	struct IMGUI_API PropertyItemCategory {
+	struct  PropertyItemCategory {
 		FString Name;
 		TArray<PropertyItem> Items;
 	};
 
-	struct IMGUI_API MemberPath {
+	struct  MemberPath {
 		FString PathString;
 		PropertyItem CachedItem;
 
@@ -162,176 +165,7 @@ namespace PropertyWatcher {
 		bool UpdateItemFromPath(TArray<PropertyItem>& Items);
 	};
 
-	IMGUI_API PropertyItem MakeObjectItem(void* _Ptr);
-	IMGUI_API PropertyItem MakeObjectItemNamed(void* _Ptr, const char* _NameOverwrite, FAView NameID = "");
-	IMGUI_API PropertyItem MakeObjectItemNamed(void* _Ptr, FString _NameOverwrite, FAView NameID = "");
-	IMGUI_API PropertyItem MakeObjectItemNamed(void* _Ptr, FAView _NameOverwrite, FAView NameID = "");
-	IMGUI_API PropertyItem MakeArrayItem(void* _Ptr, FProperty* _Prop, int _Index, bool IsObjectProp = false);
-	IMGUI_API PropertyItem MakePropertyItem(void* _Ptr, FProperty* _Prop);
-	IMGUI_API PropertyItem MakeFunctionItem(void* _Ptr, UFunction* _Function);
-	IMGUI_API PropertyItem MakePropertyItemNamed(void* _Ptr, FProperty* _Prop, FAView Name, FAView NameID = "");
-	#define PropertyWatcherMakeStructItem(StructType, _Ptr) { PropertyWatcher::PointerType::Struct, _Ptr, 0, "", StaticStruct<StructType>() }
-	#define PropertyWatcherMakeStructItemNamed(StructType, _Ptr, _NameOverwrite) { PropertyWatcher::PointerType::Struct, _Ptr, 0, _NameOverwrite, StaticStruct<StructType>() }
-
-	//
-
-	IMGUI_API void Update(FString WindowName, TArray<PropertyItemCategory>& CategoryItems, TArray<MemberPath>& WatchedMembers, UWorld* World, bool* IsOpen, bool* WantsToSave, bool* WantsToLoad, bool Init = false);
-	IMGUI_API FString ConvertWatchedMembersToString(TArray<MemberPath>& WatchedMembers);
-	IMGUI_API void LoadWatchedMembersFromString(FString String, TArray<MemberPath>& WatchedMembers);
-}
-
-#endif // PROPERTY_WATCHER_H_INCLUDE
-
-#ifdef PROPERTY_WATCHER_INTERNAL
-#undef PROPERTY_WATCHER_INTERNAL
-
-namespace PropertyWatcher {
-	struct IMGUI_API SimpleSearchParser {
-		enum Modifier {
-			Mod_Exact = 1,    // +word
-			Mod_Regex,        // regex:, reg:, r:
-			Mod_Equal,        // =value
-			Mod_Greater,      // >value
-			Mod_Less,         // <value
-			Mod_GreaterEqual, // >=value
-			Mod_LessEqual,    // <=value
-		};
-
-		enum Operator {
-			OP_And = 0,       // wordA wordB
-			OP_Or,            // wordA | wordB
-			OP_Not,           // !word
-		};
-
-		struct Test {
-			FAView Ident;
-			Modifier Mod;
-			int ColumnID = 0; // ColumnID_Name
-		};
-
-		enum CommandType {
-			Command_Test,
-			Command_Op,
-			Command_Store,
-		};
-
-		struct Command {
-			CommandType Type;
-			Test Tst;
-			Operator Op;
-
-			FAView ToString(); // For debugging.
-		};
-
-		TArray<Command> Commands;
-
-		void ParseExpression(FAView SearchString, TArray<FAView> _Columns);
-		bool ApplyTests(struct CachedColumnText& ColumnTexts);
-	};
-
-	//
-
-	struct IMGUI_API VisitedPropertyInfo {
-		void* Address;
-
-		void Set(PropertyItem& Item) { Address = Item.Ptr; };
-		bool Compare(PropertyItem& Item) { return Address == Item.Ptr; }
-		bool Compare(VisitedPropertyInfo& Info) { return Address == Info.Address; }
-	};
-
-	struct IMGUI_API TreeState {
-		// Watch item vars.
-
-		int CurrentWatchItemIndex = -1;
-		bool WatchItemGotDeleted; // Out
-		bool MoveHappened; // Out
-		int MoveFrom, MoveTo; // Out
-
-		bool RenameHappened; // Out
-		FString* PathStringPtr;
-		char* StringBuffer;
-		int StringBufferSize;
-
-		FFloatInterval ScrollRegionRange; // For item culling.
-
-		// Global options.
-
-		SimpleSearchParser SearchParser;
-		bool SearchFilterActive;
-
-		bool EnableClassCategoriesOnObjectItems;
-		bool ListFunctionsOnObjectItems;
-		bool ShowObjectNamesOnAllProperties;
-
-		// Temp options that get set by items
-
-		bool ForceToggleNodeOpenClose;
-		bool ForceToggleNodeMode; // true is open, false is close
-		int ForceToggleNodeStackIndexLimit; // Force toggle only applied up to certain depth.
-		TArray<VisitedPropertyInfo> VisitedPropertiesStack; // For open all nodes recursion safety.
-
-		bool ForceInlineChildItems;
-		int InlineStackIndexLimit;
-		int InlineMemberPathIndexOffset;
-
-		//
-
-		int ItemDrawCount; // Info.
-
-		// Visual helper.
-		bool AddressWasHovered;
-		bool DrawHoveredAddress;
-		void* HoveredAddress;
-
-		//
-
-		void EnableForceToggleNode(bool Mode, int StackIndexLimit);
-		void DisableForceToggleNode() { ForceToggleNodeOpenClose = false; }
-		bool IsForceToggleNodeActive(int StackIndex) { return ForceToggleNodeOpenClose && (StackIndex <= ForceToggleNodeStackIndexLimit); }
-		bool ItemIsInfiniteLooping(VisitedPropertyInfo& PropertyInfo);
-		bool IsCurrentItemVisible() { return ScrollRegionRange.Contains(ImGui::GetCursorPosY()); }
-	};
-
-	void DrawItemRow(TreeState& State, PropertyItem& Item, TInlineComponentArray<FAView>& CurrentPath, int StackIndex = 0);
-	void DrawItemChildren(TreeState& State, PropertyItem& Item, TInlineComponentArray<FAView>& CurrentMemberPath, int StackIndex);
-	FAView GetColumnCellText(PropertyItem& Item, int ColumnID, TreeState* State = 0, TInlineComponentArray<FAView>* CurrentMemberPath = 0, int* StackIndex = 0);
-	bool ItemHasMetaData(PropertyItem& Item);
-	FAView GetValueStringFromItem(PropertyItem& Item);
-	void DrawPropertyValue(PropertyItem& Item);
-
-	void* ContainerToValuePointer(PointerType Type, void* ContainerPtr, FProperty* MemberProp);
-
-	void DrawItemChildren(TreeState& State, PropertyItem&& Item, TInlineComponentArray<FAView>& CurrentMemberPath, int StackIndex) {
-		PropertyItem& Temp = Item;
-		return DrawItemChildren(State, Temp, CurrentMemberPath, StackIndex);
-	}
-	void DrawItemRow(TreeState& State, PropertyItem&& Item, TInlineComponentArray<FAView>& CurrentPath, int StackIndex = 0) {
-		PropertyItem& Temp = Item;
-		return DrawItemRow(State, Temp, CurrentPath, StackIndex);
-	}
-
-	//
-
-	struct TreeNodeState {
-		// In.
-
-		bool HasBranches;
-		VisitedPropertyInfo ItemInfo;
-
-		bool PushTextColor;
-		ImVec4 TextColor;
-
-		int VisualStackIndex = -1;
-		bool OverrideNoTreePush;
-
-		// Options.
-
-		bool IsOpen;
-		bool ActivatedForceToggleNodeOpenClose;
-		bool InlineChildren;
-		bool ItemIsInlined;
-	};
-
+	
 	enum ColumnID {
 		ColumnID_Name = 0,
 		ColumnID_Value,
@@ -386,6 +220,170 @@ namespace PropertyWatcher {
 		}
 	};
 
+
+	static PropertyItem MakeObjectItem(void* _Ptr);
+	static PropertyItem MakeObjectItemNamed(void* _Ptr, const char* _NameOverwrite, FAView NameID = "");
+	static PropertyItem MakeObjectItemNamed(void* _Ptr, FString _NameOverwrite, FAView NameID = "");
+	static PropertyItem MakeObjectItemNamed(void* _Ptr, FAView _NameOverwrite, FAView NameID = "");
+	static PropertyItem MakeArrayItem(void* _Ptr, FProperty* _Prop, int _Index, bool IsObjectProp = false);
+	static PropertyItem MakePropertyItem(void* _Ptr, FProperty* _Prop);
+	static PropertyItem MakeFunctionItem(void* _Ptr, UFunction* _Function);
+	static PropertyItem MakePropertyItemNamed(void* _Ptr, FProperty* _Prop, FAView Name, FAView NameID = "");
+	#define PropertyWatcherMakeStructItem(StructType, _Ptr) { PropertyWatcher::PointerType::Struct, _Ptr, 0, "", StaticStruct<StructType>() }
+	#define PropertyWatcherMakeStructItemNamed(StructType, _Ptr, _NameOverwrite) { PropertyWatcher::PointerType::Struct, _Ptr, 0, _NameOverwrite, StaticStruct<StructType>() }
+
+	//
+
+	 void Update(FString WindowName, TArray<PropertyItemCategory>& CategoryItems, TArray<MemberPath>& WatchedMembers, UWorld* World, bool* IsOpen, bool* WantsToSave, bool* WantsToLoad, bool Init = false);
+	 static FString ConvertWatchedMembersToString(TArray<MemberPath>& WatchedMembers);
+	 static void LoadWatchedMembersFromString(FString String, TArray<MemberPath>& WatchedMembers);
+
+	struct  SimpleSearchParser {
+		enum Modifier {
+			Mod_Exact = 1,    // +word
+			Mod_Regex,        // regex:, reg:, r:
+			Mod_Equal,        // =value
+			Mod_Greater,      // >value
+			Mod_Less,         // <value
+			Mod_GreaterEqual, // >=value
+			Mod_LessEqual,    // <=value
+		};
+
+		enum Operator {
+			OP_And = 0,       // wordA wordB
+			OP_Or,            // wordA | wordB
+			OP_Not,           // !word
+		};
+
+		struct Test {
+			FAView Ident;
+			Modifier Mod;
+			int ColumnID = 0; // ColumnID_Name
+		};
+
+		enum CommandType {
+			Command_Test,
+			Command_Op,
+			Command_Store,
+		};
+
+		struct Command {
+			CommandType Type;
+			Test Tst;
+			Operator Op;
+
+			FAView ToString(); // For debugging.
+		};
+
+		TArray<Command> Commands;
+
+		void ParseExpression(FAView SearchString, TArray<FAView> _Columns);
+		bool ApplyTests(struct CachedColumnText& ColumnTexts);
+	};
+
+	//
+
+	struct  VisitedPropertyInfo {
+		void* Address;
+
+		void Set(PropertyItem& Item) { Address = Item.Ptr; };
+		bool Compare(PropertyItem& Item) { return Address == Item.Ptr; }
+		bool Compare(VisitedPropertyInfo& Info) { return Address == Info.Address; }
+	};
+
+	struct  TreeState {
+		// Watch item vars.
+
+		int CurrentWatchItemIndex = -1;
+		bool WatchItemGotDeleted; // Out
+		bool MoveHappened; // Out
+		int MoveFrom, MoveTo; // Out
+
+		bool RenameHappened; // Out
+		FString* PathStringPtr;
+		char* StringBuffer;
+		int StringBufferSize;
+
+		FFloatInterval ScrollRegionRange; // For item culling.
+
+		// Global options.
+
+		SimpleSearchParser SearchParser;
+		bool SearchFilterActive;
+
+		bool EnableClassCategoriesOnObjectItems;
+		bool ListFunctionsOnObjectItems;
+		bool ShowObjectNamesOnAllProperties;
+
+		// Temp options that get set by items
+
+		bool ForceToggleNodeOpenClose;
+		bool ForceToggleNodeMode; // true is open, false is close
+		int ForceToggleNodeStackIndexLimit; // Force toggle only applied up to certain depth.
+		TArray<VisitedPropertyInfo> VisitedPropertiesStack; // For open all nodes recursion safety.
+
+		bool ForceInlineChildItems;
+		int InlineStackIndexLimit;
+		int InlineMemberPathIndexOffset;
+
+		//
+
+		int ItemDrawCount; // Info.
+
+		// Visual helper.
+		bool AddressWasHovered;
+		bool DrawHoveredAddress;
+		void* HoveredAddress;
+
+		//
+
+		void EnableForceToggleNode(bool Mode, int StackIndexLimit);
+		void DisableForceToggleNode() { ForceToggleNodeOpenClose = false; }
+		bool IsForceToggleNodeActive(int StackIndex) { return ForceToggleNodeOpenClose && (StackIndex <= ForceToggleNodeStackIndexLimit); }
+		bool ItemIsInfiniteLooping(VisitedPropertyInfo& PropertyInfo);
+		bool IsCurrentItemVisible() { return ScrollRegionRange.Contains(ImGui::GetCursorPosY()); }
+	};
+
+	void DrawItemRow(TreeState& State, PropertyItem& Item, TInlineComponentArray<FAView>& CurrentPath, int StackIndex = 0);
+	void DrawItemChildren(TreeState& State, PropertyItem& Item, TInlineComponentArray<FAView>& CurrentMemberPath, int StackIndex);
+	static FAView GetColumnCellText(PropertyItem& Item, int ColumnID, TreeState* State = 0, TInlineComponentArray<FAView>* CurrentMemberPath = 0, int* StackIndex = 0);
+	static bool ItemHasMetaData(PropertyItem& Item);
+	static FAView GetValueStringFromItem(PropertyItem& Item);
+	static void DrawPropertyValue(PropertyItem& Item);
+
+	static void* ContainerToValuePointer(PointerType Type, void* ContainerPtr, FProperty* MemberProp);
+
+	void DrawItemChildren(TreeState& State, PropertyItem&& Item, TInlineComponentArray<FAView>& CurrentMemberPath, int StackIndex) {
+		PropertyItem& Temp = Item;
+		return DrawItemChildren(State, Temp, CurrentMemberPath, StackIndex);
+	}
+	void DrawItemRow(TreeState& State, PropertyItem&& Item, TInlineComponentArray<FAView>& CurrentPath, int StackIndex = 0) {
+		PropertyItem& Temp = Item;
+		return DrawItemRow(State, Temp, CurrentPath, StackIndex);
+	}
+
+	//
+
+	struct TreeNodeState {
+		// In.
+
+		bool HasBranches;
+		VisitedPropertyInfo ItemInfo;
+
+		bool PushTextColor;
+		ImVec4 TextColor;
+
+		int VisualStackIndex = -1;
+		bool OverrideNoTreePush;
+
+		// Options.
+
+		bool IsOpen;
+		bool ActivatedForceToggleNodeOpenClose;
+		bool InlineChildren;
+		bool ItemIsInlined;
+	};
+
 	void SetTableRowBackgroundByStackIndex(int StackIndex);
 
 	// Makes the tree node widget for property name. Handles expansion/inlining/column management and so on.
@@ -399,30 +397,14 @@ namespace PropertyWatcher {
 
 	TArray<FName> GetClassFunctionList(UClass* Class);
 	TArray<UFunction*> GetObjectFunctionList(UObject* Obj);
-	FAView GetItemMetadataCategory(PropertyItem& Item);
-	bool GetItemColor(PropertyItem& Item, ImVec4& Color);
-	bool GetObjFromObjPointerProp(PropertyItem& Item, UObject*& Object);
+	static FAView GetItemMetadataCategory(PropertyItem& Item);
+	static bool GetItemColor(PropertyItem& Item, ImVec4& Color);
+	static bool GetObjFromObjPointerProp(PropertyItem& Item, UObject*& Object);
 
-	//
+	void ObjectsTab(bool DrawControls, TArray<PropertyItemCategory>& CategoryItems, TreeState* State = 0);
+	void ActorsTab(bool DrawControls, UWorld* World, TreeState* State = 0, ColumnInfos* ColInfos = 0, bool Init = false);
+	void WatchTab(bool DrawControls, TArray<MemberPath>&WatchedMembers, bool* WantsToSave, bool* WantsToLoad, TArray<PropertyItemCategory>&CategoryItems, TreeState * State = 0);
 
-	extern const char* SearchBoxHelpText;
-	extern const char* HelpText;
-
-	#define ImGui_StoA(ws) StringCast<char>(ws).Get()
-	#define ArrayCount(array) (sizeof(array) / sizeof((array)[0]))
-	#ifndef defer
-	#define defer ON_SCOPE_EXIT
-	#endif
-
-	namespace ImGuiAddon {
-		bool InputText(const char* label, TArray<char>& str, ImGuiInputTextFlags flags = 0, ::ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
-		bool InputTextWithHint(const char* label, const char* hint, TArray<char>& str, ImGuiInputTextFlags flags = 0, ::ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
-
-		bool InputString(FString Label, FString& String, TArray<char>& StringBuffer, ImGuiInputTextFlags flags = ImGuiInputTextFlags_EnterReturnsTrue);
-		bool InputStringWithHint(FString Label, FString Hint, FString& String, TArray<char>& StringBuffer, ImGuiInputTextFlags flags = ImGuiInputTextFlags_EnterReturnsTrue);
-
-		void QuickTooltip(FString TooltipText, ImGuiHoveredFlags Flags = ImGuiHoveredFlags_DelayNormal);
-	}
 
 	// Stable pointers, doubles in size, allocates/frees by moving index.
 	struct TempMemoryPool {
@@ -474,8 +456,8 @@ namespace PropertyWatcher {
 		#define TMemBuilder(Name) TMemBuilderS(Name, 512)
 	};
 
-	TempMemoryPool TMem;
-	int TMemoryStartSize = 1024;
+	static TempMemoryPool TMem;
+	inline static int TMemoryStartSize = 1024;
 
 	//
 
@@ -515,11 +497,36 @@ namespace PropertyWatcher {
 			return SectionNames[SectionIndex];
 		}
 	};
+};
+
+//
+
+extern const char* SearchBoxHelpText;
+extern const char* HelpText;
+
+#define ImGui_StoA(ws) StringCast<char>(ws).Get()
+#define ArrayCount(array) (sizeof(array) / sizeof((array)[0]))
+#ifndef defer
+#define defer ON_SCOPE_EXIT
+#endif
+
+namespace ImGuiAddon
+{
+	bool InputText(const char* label, TArray<char>& str, ImGuiInputTextFlags flags = 0,
+	               ::ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
+	bool InputTextWithHint(const char* label, const char* hint, TArray<char>& str, ImGuiInputTextFlags flags = 0,
+	                       ::ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
+
+	bool InputString(FString Label, FString& String, TArray<char>& StringBuffer,
+	                 ImGuiInputTextFlags flags = ImGuiInputTextFlags_EnterReturnsTrue);
+	bool InputStringWithHint(FString Label, FString Hint, FString& String, TArray<char>& StringBuffer,
+	                         ImGuiInputTextFlags flags = ImGuiInputTextFlags_EnterReturnsTrue);
+
+	void QuickTooltip(FString TooltipText, ImGuiHoveredFlags Flags = ImGuiHoveredFlags_DelayNormal);
 }
 
 
-#endif // PROPERTY_WATCHER_INTERNAL
-#endif // UE_SERVER
+
 
 #if defined(__clang__)
 #pragma clang diagnostic pop
