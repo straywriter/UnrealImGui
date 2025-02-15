@@ -355,16 +355,19 @@ namespace PropertyWatcher {
 		float InitWidth = 0.0f;
 	};
 
-	struct CachedColumnText {
+	struct CachedColumnText
+	{
 		bool ColumnTextsCached[ColumnID_MAX_SIZE] = {};
 		FAView ColumnTexts[ColumnID_MAX_SIZE];
 
-		void Add(int ColumnID, FAView Text) {
+		void Add(int ColumnID, FAView Text)
+		{
 			ColumnTextsCached[ColumnID] = true;
 			ColumnTexts[ColumnID] = Text;
 		}
 
-		FAView* Get(int ColumnID) {
+		FAView* Get(int ColumnID)
+		{
 			if (ColumnTextsCached[ColumnID])
 				return &ColumnTexts[ColumnID];
 			return 0;
@@ -421,8 +424,6 @@ namespace PropertyWatcher {
 		void QuickTooltip(FString TooltipText, ImGuiHoveredFlags Flags = ImGuiHoveredFlags_DelayNormal);
 	}
 
-	//
-
 	// Stable pointers, doubles in size, allocates/frees by moving index.
 	struct TempMemoryPool {
 		struct MemBucket {
@@ -478,16 +479,19 @@ namespace PropertyWatcher {
 
 	//
 
-	struct SectionHelper {
-		FName                         CurrentName = NAME_None;
-		int                           CurrentIndex = 0;
-		bool                          Enabled = false;
+	struct SectionHelper
+	{
+		FName CurrentName = NAME_None;
+		int CurrentIndex = 0;
+		bool Enabled = false;
 		TInlineComponentArray<FAView> SectionNames;
-		TInlineComponentArray<int>    StartIndexes;
-		int                           CurrentSectionIndex = 0;
+		TInlineComponentArray<int> StartIndexes;
+		int CurrentSectionIndex = 0;
 
-		FORCEINLINE void Add(FName Name) {
-			if (Name != CurrentName) {
+		FORCEINLINE void Add(FName Name)
+		{
+			if (Name != CurrentName)
+			{
 				CurrentName = Name;
 				SectionNames.Add(TMem.NToA(CurrentName));
 				StartIndexes.Push(CurrentIndex);
@@ -495,7 +499,8 @@ namespace PropertyWatcher {
 			CurrentIndex++;
 		}
 
-		void Init() {
+		void Init()
+		{
 			StartIndexes.Push(CurrentIndex); // For last section to get correct member end index.
 			if (SectionNames.Num() >= 2)
 				Enabled = true;
@@ -503,7 +508,8 @@ namespace PropertyWatcher {
 
 		int GetSectionCount() { return SectionNames.Num(); };
 
-		FAView GetSectionInfo(int SectionIndex, int& MemberStartIndex, int& MemberEndIndex) {
+		FAView GetSectionInfo(int SectionIndex, int& MemberStartIndex, int& MemberEndIndex)
+		{
 			MemberStartIndex = StartIndexes[SectionIndex];
 			MemberEndIndex = StartIndexes[SectionIndex + 1];
 			return SectionNames[SectionIndex];

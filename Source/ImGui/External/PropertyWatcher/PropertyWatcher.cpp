@@ -107,6 +107,8 @@
 #define PROPERTY_WATCHER_INTERNAL
 #include "PropertyWatcher.h"
 
+#include "EngineUtils.h"
+
 #include "imgui_internal.h"
 
 #include "Kismet/KismetSystemLibrary.h"
@@ -370,10 +372,11 @@ void Update(FString WindowName, TArray<PropertyItemCategory>& CategoryItems, TAr
 	int HoveredID = ImGui::GetHoveredID() == 0 ? 1 : ImGui::GetHoveredID();
 	if (ImGui::BeginDragDropTargetCustom(TargetRect, HoveredID)) {
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PropertyWatcherMember")) {
+			
 			char* Payload = (char*)payload->Data;
-
 			MemberPath Member;
-			Member.PathString = Payload;
+
+			Member.PathString = FString::ConstructFromPtrSize(Payload, payload->DataSize);
 			WatchedMembers.Push(Member);
 		}
 	}
@@ -523,7 +526,32 @@ void ActorsTab(bool DrawControls, UWorld* World, TreeState* State, ColumnInfos* 
 				} else {
 					ULevel* CurrentLevel = World->GetCurrentLevel();
 					if (CurrentLevel) {
-						for (auto& Actor : CurrentLevel->Actors) {
+
+						TArray<AActor*> Actors;
+						for (TActorIterator<AActor> It(World, AActor::StaticClass()); It; ++It)
+						{
+							AActor* Actor = *It;
+
+							// todo cache
+	
+							bool AddActor = true;
+							// if (Filter != nullptr && Filter->IsActive())
+							// {
+							//     const auto ActorName = StringCast<ANSICHAR>(*GetActorName(*Actor));
+							//     if (Filter != nullptr && Filter->PassFilter(ActorName.Get()) == false)
+							//     {
+							//         AddActor = false;
+							//     }
+							// }
+	
+							if (AddActor)
+							{
+								Actors.Add(Actor);
+							}
+						}
+
+						
+						for (auto& Actor : Actors) {
 							if (!Actor) continue;
 							ActorItems.Push(MakeObjectItem(Actor));
 						}
@@ -593,7 +621,7 @@ void ActorsTab(bool DrawControls, UWorld* World, TreeState* State, ColumnInfos* 
 			}
 		}
 	}
-	
+
 	TInlineComponentArray<FAView> CurrentPath;
 	for (auto& Item : ActorItems)
 		DrawItemRow(*State, Item, CurrentPath);
@@ -1303,7 +1331,7 @@ void DrawPropertyValue(PropertyItem& Item) {
 			StringBuffer.Push('\0');
 			uint8* Value = (uint8*)Item.Ptr;
 			int TempInt = *Value;
-			if (ImGui::Combo("##Enum", &TempInt, StringBuffer.GetData(), Count))
+			if (ImGui::Combo(*TMem.Printf("##Enum_%p", Item.Prop), &TempInt, StringBuffer.GetData(), Count))
 				*Value = TempInt;
 		}
 
@@ -1313,33 +1341,33 @@ void DrawPropertyValue(PropertyItem& Item) {
 		BoolProp->SetPropertyValue(Item.Ptr, TempBool);
 
 	} else if (Item.Prop->IsA(FInt8Property::StaticClass())) {
-		ImGui::InputScalar(*TMem.Printf("##FInt8Property_*p", Item.Prop), ImGuiDataType_S8, Item.Ptr, &IntStep, &IntStepFast8);
+		ImGui::InputScalar(*TMem.Printf("##FInt8Property_%p", Item.Prop), ImGuiDataType_S8, Item.Ptr, &IntStep, &IntStepFast8);
 
 	} else if (Item.Prop->IsA(FByteProperty::StaticClass())) {
-		ImGui::InputScalar("##FByteProperty", ImGuiDataType_U8, Item.Ptr, &IntStep, &IntStepFast8);
+		ImGui::InputScalar(*TMem.Printf("##FByteProperty_%p", Item.Prop), ImGuiDataType_U8, Item.Ptr, &IntStep, &IntStepFast8);
 
 	} else if (Item.Prop->IsA(FInt16Property::StaticClass())) {
-		ImGui::InputScalar("##FInt16Property", ImGuiDataType_S16, Item.Ptr, &IntStep, &IntStepFast);
+		ImGui::InputScalar(*TMem.Printf("##FInt16Property_%p", Item.Prop), ImGuiDataType_S16, Item.Ptr, &IntStep, &IntStepFast);
 
 	} else if (Item.Prop->IsA(FUInt16Property::StaticClass())) {
-		ImGui::InputScalar("##FUInt16Property", ImGuiDataType_U16, Item.Ptr, &IntStep, &IntStepFast);
+		ImGui::InputScalar(*TMem.Printf("##FUInt16Property_%p", Item.Prop), ImGuiDataType_U16, Item.Ptr, &IntStep, &IntStepFast);
 
 	} else if (Item.Prop->IsA(FIntProperty::StaticClass())) {
-		ImGui::InputScalar("##FIntProperty", ImGuiDataType_S32, Item.Ptr, &IntStep, &IntStepFast);
+		ImGui::InputScalar(*TMem.Printf("##FIntProperty_%p", Item.Prop), ImGuiDataType_S32, Item.Ptr, &IntStep, &IntStepFast);
 
 	} else if (Item.Prop->IsA(FUInt32Property::StaticClass())) {
-		ImGui::InputScalar("##FUInt32Property", ImGuiDataType_U32, Item.Ptr, &IntStep, &IntStepFast);
+		ImGui::InputScalar(*TMem.Printf("##FUInt32Property_%p", Item.Prop), ImGuiDataType_U32, Item.Ptr, &IntStep, &IntStepFast);
 
 	} else if (Item.Prop->IsA(FInt64Property::StaticClass())) {
-		ImGui::InputScalar("##FInt64Property", ImGuiDataType_S64, Item.Ptr, &Int64Step, &Int64StepFast);
+		ImGui::InputScalar(*TMem.Printf("##FInt64Property_%p", Item.Prop), ImGuiDataType_S64, Item.Ptr, &Int64Step, &Int64StepFast);
 
 	} else if (Item.Prop->IsA(FUInt64Property::StaticClass())) {
-		ImGui::InputScalar("##FUInt64Property", ImGuiDataType_U64, Item.Ptr, &Int64Step, &Int64StepFast);
+		ImGui::InputScalar(*TMem.Printf("##FUInt64Property_%p", Item.Prop), ImGuiDataType_U64, Item.Ptr, &Int64Step, &Int64StepFast);
 
 	} else if (Item.Prop->IsA(FFloatProperty::StaticClass())) {
 		//ImGui::IsItemHovered
 		//if(!DragEnabled)
-		ImGui::InputFloat("##FFloatProperty", (float*)Item.Ptr);
+		ImGui::InputFloat(*TMem.Printf("##FFloatProperty_%p", Item.Prop) , (float*)Item.Ptr);
 		//else 
 			//ImGui::DragFloat("##FFloatProperty", (float*)Item.Ptr, 1.0f);
 
@@ -1947,7 +1975,9 @@ bool BeginTreeNode(const char* NameID, const char* DisplayName, TreeNodeState& N
 				Flags |= ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
 			const char* DisplayText = IsNameNodeVisible ? DisplayName : "";
+			ImGui::PushID(NameID);
 			NodeState.IsOpen = ImGui::TreeNodeEx(NameID, Flags, DisplayText);
+			ImGui::PopID();
 
 			{
 				NodeState.ActivatedForceToggleNodeOpenClose = false;
