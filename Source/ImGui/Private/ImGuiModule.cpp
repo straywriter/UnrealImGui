@@ -209,6 +209,18 @@ void FImGuiModule::ShutdownModule()
 #endif // WITH_EDITOR
 }
 
+ImFontAtlas* FImGuiModule::GetFontAtlas()
+{
+	if(ImGuiModuleManager)
+	{
+		return &ImGuiModuleManager->GetContextManager().GetFontAtlas();
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
 #if WITH_EDITOR
 void FImGuiModule::SetProperties(const FImGuiModuleProperties& Properties)
 {

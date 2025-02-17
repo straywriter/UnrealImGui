@@ -39,6 +39,9 @@ static ImGuiContext* ImGuiContextPtr = nullptr;
 static FImGuiContextHandle ImGuiContextPtrHandle(ImGuiContextPtr);
 
 // Get the global ImGui context pointer (GImGui) indirectly to allow redirections in obsolete modules.
+#ifdef GImGui
+#undef GImGui
+#endif
 #define GImGui (ImGuiContextPtrHandle.Get())
 #endif // WITH_EDITOR
 
@@ -72,4 +75,11 @@ namespace ImGuiImplementation
 		ImGuiContextPtrHandle.SetParent(&Parent);
 	}
 #endif // WITH_EDITOR
+}
+
+#include "ImGuiUtils.h"
+
+ImGuiContext* ImGui::GetGImGui()
+{
+	return GImGui;
 }

@@ -10,7 +10,7 @@
 
 class UTexture;
 
-class FImGuiModule : public IModuleInterface
+class IMGUI_API FImGuiModule : public IModuleInterface
 {
 public:
 
@@ -192,6 +192,8 @@ public:
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
+
+	ImFontAtlas* GetFontAtlas();
 
 private:
 #if WITH_EDITOR

@@ -6,15 +6,18 @@
 
 #include <imgui.h>
 
+#include "ImGuiTextureHandle.generated.h"
+
 
 /**
  * Handle to texture resources registered in module instance. Returned after successful texture registration.
  * Can be implicitly converted to ImTextureID making it possible to use it directly with ImGui interface.
  * Once texture is not needed handle can be used to release resources.
  */
-class IMGUI_API FImGuiTextureHandle
+USTRUCT(BlueprintType)
+struct IMGUI_API FImGuiTextureHandle
 {
-public:
+	GENERATED_BODY()
 
 	/** Creates an empty (null and not valid) texture handle. */
 	FImGuiTextureHandle();

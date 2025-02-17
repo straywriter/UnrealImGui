@@ -1,80 +1,3 @@
-/*
-	PropertyWatcher - v0.3.4 - http://github.com/guitarfreak/PropertyWatcher
-	by Roy Thieme
-
-	INFO:
-		A runtime variable watch window for Unreal Engine using ImGui.
-		
-	DEPENDENCIES:
-		Needs ImGui to work. Search github for an Unreal ImGui backend plugin.
-
-	USAGE EXAMPLE:
-		...
-	
-		#include "Misc/FileHelper.h"
-		#include "Kismet/GameplayStatics.h"
-	
-		...
-	
-		static bool PropertyWatcherIsOpen = true;
-		if (PropertyWatcherIsOpen) {
-			// This should be set to true once at the beginning.
-			// It's not crucial to set it, but among other things it clears the internal actors array after a restart.
-			// If you looked up some actors in the actors tab and didn't clear them after a restart you will get a crash.
-			// This happens because internally we use static TArray<> which doesn't get cleared on a restart, only on the first compile.
-			bool PropertyWatcherInit = false;
-
-			static TArray<PropertyWatcher::MemberPath> WatchedMembers;
-
-			auto World = GetWorld();
-			auto GameInstance = GetGameInstance();
-			auto GameMode = UGameplayStatics::GetGameMode(GetWorld());
-			auto PlayerController = World->GetFirstPlayerController();
-
-			PropertyWatcher::PropertyItemCategory CatA = { "Group A", {
-				PropertyWatcher::MakeObjectItem(GetWorld()),
-				PropertyWatcher::MakeObjectItemNamed(GameInstance, GameInstance->GetClass()->GetName()),
-
-				// You can also add structs like this:
-				// PropertyWatcherMakeStructItem(FMyStruct, &MyStruct),
-				//
-				// That said, the function macro is using StaticStruct<StructType>() to get the script struct, but I
-				// couldn't get it to work for built in structs while writing this usage code.
-				// But local self made structs should definitely work.
-			} };
-
-			PropertyWatcher::PropertyItemCategory CatB = { "Group B", {
-				PropertyWatcher::MakeObjectItem(GameMode),
-				PropertyWatcher::MakeObjectItemNamed(PlayerController, PlayerController->GetClass()->GetName()),
-			} };
-
-			TArray<PropertyWatcher::PropertyItemCategory> Objects = { CatA, CatB };
-
-			bool WantsToSave, WantsToLoad;
-			PropertyWatcher::Update("Actors", Objects, WatchedMembers, GetWorld(), &PropertyWatcherIsOpen, &WantsToSave, &WantsToLoad, PropertyWatcherInit);
-
-			if (PropertyWatcherInit)
-				WantsToLoad = true;
-
-			FString WatchWindowFilePath = FPaths::ProjectSavedDir() + "ImGui/PropertyWatcher-WatchWindowMembers.txt";
-			if (WantsToSave)
-				FFileHelper::SaveStringToFile(PropertyWatcher::ConvertWatchedMembersToString(WatchedMembers), *WatchWindowFilePath);
-
-			if (WantsToLoad) {
-				FString Data;
-				if (FFileHelper::LoadFileToString(Data, *WatchWindowFilePath))
-					PropertyWatcher::LoadWatchedMembersFromString(Data, WatchedMembers);
-			}
-
-			PropertyWatcherInit = false;
-		}
-
-		...
-
-	LICENSE:
-		See end of file for license information.
-*/
-
 #pragma once
 
 #if defined(__clang__)
@@ -525,12 +448,86 @@ namespace ImGuiAddon
 	void QuickTooltip(FString TooltipText, ImGuiHoveredFlags Flags = ImGuiHoveredFlags_DelayNormal);
 }
 
-
-
-
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
+
+/*
+	PropertyWatcher - v0.3.4 - http://github.com/guitarfreak/PropertyWatcher
+	by Roy Thieme
+
+	INFO:
+		A runtime variable watch window for Unreal Engine using ImGui.
+		
+	DEPENDENCIES:
+		Needs ImGui to work. Search github for an Unreal ImGui backend plugin.
+
+	USAGE EXAMPLE:
+		...
+	
+		#include "Misc/FileHelper.h"
+		#include "Kismet/GameplayStatics.h"
+	
+		...
+	
+		static bool PropertyWatcherIsOpen = true;
+		if (PropertyWatcherIsOpen) {
+			// This should be set to true once at the beginning.
+			// It's not crucial to set it, but among other things it clears the internal actors array after a restart.
+			// If you looked up some actors in the actors tab and didn't clear them after a restart you will get a crash.
+			// This happens because internally we use static TArray<> which doesn't get cleared on a restart, only on the first compile.
+			bool PropertyWatcherInit = false;
+
+			static TArray<PropertyWatcher::MemberPath> WatchedMembers;
+
+			auto World = GetWorld();
+			auto GameInstance = GetGameInstance();
+			auto GameMode = UGameplayStatics::GetGameMode(GetWorld());
+			auto PlayerController = World->GetFirstPlayerController();
+
+			PropertyWatcher::PropertyItemCategory CatA = { "Group A", {
+				PropertyWatcher::MakeObjectItem(GetWorld()),
+				PropertyWatcher::MakeObjectItemNamed(GameInstance, GameInstance->GetClass()->GetName()),
+
+				// You can also add structs like this:
+				// PropertyWatcherMakeStructItem(FMyStruct, &MyStruct),
+				//
+				// That said, the function macro is using StaticStruct<StructType>() to get the script struct, but I
+				// couldn't get it to work for built in structs while writing this usage code.
+				// But local self made structs should definitely work.
+			} };
+
+			PropertyWatcher::PropertyItemCategory CatB = { "Group B", {
+				PropertyWatcher::MakeObjectItem(GameMode),
+				PropertyWatcher::MakeObjectItemNamed(PlayerController, PlayerController->GetClass()->GetName()),
+			} };
+
+			TArray<PropertyWatcher::PropertyItemCategory> Objects = { CatA, CatB };
+
+			bool WantsToSave, WantsToLoad;
+			PropertyWatcher::Update("Actors", Objects, WatchedMembers, GetWorld(), &PropertyWatcherIsOpen, &WantsToSave, &WantsToLoad, PropertyWatcherInit);
+
+			if (PropertyWatcherInit)
+				WantsToLoad = true;
+
+			FString WatchWindowFilePath = FPaths::ProjectSavedDir() + "ImGui/PropertyWatcher-WatchWindowMembers.txt";
+			if (WantsToSave)
+				FFileHelper::SaveStringToFile(PropertyWatcher::ConvertWatchedMembersToString(WatchedMembers), *WatchWindowFilePath);
+
+			if (WantsToLoad) {
+				FString Data;
+				if (FFileHelper::LoadFileToString(Data, *WatchWindowFilePath))
+					PropertyWatcher::LoadWatchedMembersFromString(Data, WatchedMembers);
+			}
+
+			PropertyWatcherInit = false;
+		}
+
+		...
+
+	LICENSE:
+		See end of file for license information.
+*/
 
 /*
 	MIT License

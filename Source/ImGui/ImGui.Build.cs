@@ -112,5 +112,21 @@ public class ImGui : ModuleRules
 
 		PrivateDefinitions.Add("IMGUI_ENABLE_FREETYPE");
 		PrivateIncludePaths.Add("ImGui/Public/misc/freetype");
+		PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Private"));
+		PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "External"));
+		PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "External", "ImGuiToggle"));
+		PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "External", "Widget"));
+		PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "External", "ImGuiNotify"));
+		PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "External", "PropertyWatcher"));
+		PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "External", "md4c"));
+
+		// Use ImGui config file
+		PublicDefinitions.AddRange(new[]
+		{
+			"IMGUI_USER_CONFIG=\"ImGuiConfig.h\""
+		});
+		
+		bUseUnity = false;
+
 	}
 }
