@@ -3,7 +3,7 @@
 	"Version": 1,
 	"VersionName": "0.1.0",
 	"FriendlyName": "ImGui",
-	"Description": "",
+	"Description": "Dear ImGui is a bloat-free graphical user interface library for C++",
 	"Category": "Debug",
 	"CreatedBy": "",
 	"CreatedByURL": "",
