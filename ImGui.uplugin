@@ -5,7 +5,7 @@
 	"FriendlyName": "ImGui",
 	"Description": "Dear ImGui is a bloat-free graphical user interface library for C++",
 	"Category": "Debug",
-	"CreatedBy": "",
+	"CreatedBy": "Omar Cornut, segross, IDI-Systems, Other contributors",
 	"CreatedByURL": "",
 	"DocsURL": "",
 	"MarketplaceURL": "",
@@ -19,5 +19,6 @@
 			"Type": "Runtime",
 			"LoadingPhase": "PreDefault"
 		}
-	]
+	],
+	"IsExperimentalVersion": false
 }
